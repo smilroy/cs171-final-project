@@ -44,31 +44,24 @@ We plan to make the main visualization a map where death and prevalence are able
 
 ### Must-Have Features. 
 
-These are features without which you would consider your project to be a failure.
-
-[Work In Progress]
-
-1. Adolescent AIDS prevalence rate for a given year on a global map
-2. Adolescent AIDS death rate for a given year on a global map
-3. Must show total number on selecting a particular country
-4. Must have a comparative visualization showing % rate difference between global population vs adolescent population
-5. Must have a comparative visualization showing % rate difference between male and female adolescents
-6. Visualization must have a way to toggle between prevalence and death data
-7. All the visualizations must be updated to reflect the correct data when user toggles a selection
-8. Must have a time slider for users to choose year for which they want to see the data
-9. Trend analysis visualization to show the trend for all the countries over the years
-10. Must have a filtering mechanism in trend visualization to allow users to filter by country
-
+1. Show adolescent AIDS prevalence data for a given year on a global map
+2. Show adolescent AIDS death data for a given year on a global map
+3. Allow users to view country specific statistics when clicking on a country
+4. Show AIDS prevalence/death rate difference between overall population vs adolescent population
+5. Show AIDS prevalence/death rate difference between male and female adolescents 
+6. Allow users to toggle between prevalence and death data
+7. Allow users to change'year' with time slider
+8. Add trend analysis visualization to show AIDS prevalence/death trend for all the countries over the years
+9. Allow users to filter trend visualization by country
+10. Allow users to select a time range to see detailed statistics on trend visualization
 
 ### Optional Features. 
 
-[Work In Progress]
-
-1. Make trend svg lines clickable to show country specific data
+1. Make trend visualization svgs clickable to show country specific data
 2. Show co-relation between gdp and adolescent aids
-3. 
-
-Those features which you consider would be nice to have, but not critical.
+3. Show co-relation between global funding and prevalence of adolescent AIDS
+4. Allow users to see aggregated data on AIDS by UN regions instead of countries
+5. Allow users to filter by gender on trend analysis visualization
 
 ### Project Schedule. 
 
