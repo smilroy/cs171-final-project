@@ -36,8 +36,8 @@ We plan to make the main visualization a map where death and prevalence are able
 <p align="center">
   <img src="sketches/map.jpg" width="500"/>
   <img src="sketches/detailedprevalencedeath.jpg" width="500"/>
-  <img src="sketches/IMG_7174.jpg" width="500"/>
-  <img src="sketches/IMG_7175.jpg" width="500"/>
+  <img src="sketches/IMG_7174.JPG" width="500"/>
+  <img src="sketches/IMG_7175.JPG" width="500"/>
   <img src="sketches/sketch.jpg" width="500"/>
 </p>
 
