@@ -32,7 +32,7 @@ Because of the limited data processing that we expect, we will mostly clean up d
 
 We plan to make the main visualization a map where death and prevalence are able to be toggled, with different levels of each indicated by color. A legend will be used to identify this information. Additionally, as we have data that spans 1990-2013, we want to show these trends over time with a slider or a similar visual element. Finally, we hope to have smaller visualizations adjacent to the primary map visualization that focuses the data on adolescent health and differentiates based on gender.
 
-# Map Variations
+#### Map Variations
 <p align="center">
   <img src="sketches/map.jpg" width="500"/>
   <img src="sketches/detailedprevalencedeath.jpg" width="500"/>
@@ -40,7 +40,6 @@ We plan to make the main visualization a map where death and prevalence are able
   <img src="sketches/IMG_7175.jpg" width="500"/>
   <img src="sketches/sketch.jpg" width="500"/>
 </p>
-
 
 ### Must-Have Features. 
 
