@@ -22,11 +22,24 @@ We are using data from the Global Burden of Disease Study which ranges from 1990
 
 ### Data Processing. 
 
-Do you expect to do substantial data cleanup? What quantities do you plan to derive from your data? How will data processing be implemented?
+We are beginning from the aforementioned dataset that is a .csv file that has HIV mortality and prevalence data already separated by age, gender, and geography. However, this dataset may require augmentation: for example, geography may require longitude and latitude for visualization, death and prevalence figures may require overall population numbers for context. We expect the data cleanup to be rather minimal in this case.
+
+The key quantities we plan to derive from our data are the death and prevalence figures (and incidence, to a lesser extent, which is available currently only for the most recent year). We are attempting to create a visualization that emphasizes this data on the adolescent population. 
+
+Because of the limited data processing that we expect, we will mostly clean up data with tools with basic R scripts can help join data across relevant categories or reduce data to only the information that is relevant.
 
 ### Visualization. 
 
-How will you display your data? Provide some general ideas that you have for the visualization design. Include sketches of your design.
+We plan to make the main visualization a map where death and prevalence are able to be toggled, with different levels of each indicated by color. A legend will be used to identify this information. Additionally, as we have data that spans 1990-2013, we want to show these trends over time with a slider or a similar visual element. Finally, we hope to have smaller visualizations adjacent to the primary map visualization that focuses the data on adolescent health and differentiates based on gender.
+
+#### Map Variations
+<p align="center">
+  <img src="sketches/map.jpg" width="500"/>
+  <img src="sketches/detailedprevalencedeath.jpg" width="500"/>
+  <img src="sketches/IMG_7174.JPG" width="500"/>
+  <img src="sketches/IMG_7175.JPG" width="500"/>
+  <img src="sketches/sketch.jpg" width="500"/>
+</p>
 
 ### Must-Have Features. 
 
