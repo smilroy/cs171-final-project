@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Adolescent AIDS</title>
+    <!-- ADD Libraries-->
+    <script src="libs/d3/d3.min.js" charset="utf-8"></script>
+    <script src="libs/jquery/jquery-2.1.1.min.js" charset="utf-8"></script>
+    <script src="libs/bootstrap/js/bootstrap.min.js" charset="utf-8"></script>
+    <script src="http://d3js.org/queue.v1.min.js"></script>
+    <script src="libs/colorbrewer.js"></script>
+
+    <!--Stylesheets-->
+    <link rel="stylesheet" type="text/css" href="libs/bootstrap/css/bootstrap.min.css">
+
+    <!-- Project Stylesheet -->
+    <link rel="stylesheet" type="text/css" href="css/myStyle.css">
+
+    <!-- Project js -->
+    <script src="js/map.js"></script>
+</head>
+<body>
+    <div class="container">
+       <!-- <h1>Adolescent AIDS</h1> -->
+        <div class="row">
+
+        </div>
+        <div class="row">
+            <div id="info" style="float:left;">
+            </div>
+            <div id="bar" style="float:left;">
+            </div>
+         </div>
+        <div class="row">
+            <div class ="col-md-1">
+                <div id="filter" style="float:left; width:200px;margin-top:5px;">
+                    <!-- <label>Show:</label> -->
+                    <input type="radio" name="filter" value="prevalence" checked>Prevalence
+                    <input type="radio" name="filter" value="deaths">Deaths
+                </div>
+                <div id="slider" style="float:left;width:200px;margin-top:5px;">
+                </div>
+            </div>
+            </div>
+        <div class="row">
+            <div id="global-map" class ="col-md-8">
+            </div>
+            <div class ="col-md-3">
+                Individual Country Visualization
+                (updated when a country is clicked or on mouseover)
+            </div>
+        </div>
+        <div class="row">
+            <div id="trend_vis" class="col-map">
+                Trend Visualization
+            </div>
+        </div>
+    </div>
+    <script>
+        $(function(){
+            var map;
+            queue()
+                    .defer(d3.json, 'data/world_data.json')
+                    .defer(d3.csv, 'data/aids_data.csv')
+                    .await(function (error, worldData, aidsData){
+                        LoadData(error, worldData, aidsData);
+                    });
+
+            var LoadData = function(error, worldData, aidsData){
+                if(!error)
+                {
+                    console.log(aidsData);
+                     map = new Map(d3.select("#global-map"), worldData, aidsData);
+                    /** Clean or Aggregate aids data to worldData array **/
+                }
+            }
+            /**** Add UI Events ****/
+            d3.select("#filter").selectAll("input").on("click", function() {
+                map.updateMetric(d3.select(this).node().value);
+            })
+            d3.select("#slider").
+                    append("input")
+                    .attr("type", "range")
+                    .attr("name", "points")
+                    .attr("min", "1995")
+                    .attr("max", "2012")
+                    .attr("step", "1")
+                    .attr("value", "0");
+
+            /********** TEST ONLY will require its own vis implementation *******************/
+
+           var infoSvg =  d3.select("#info").append("svg")
+            infoSvg.attr("width", 250);
+            infoSvg.attr("height", 100);
+            var g_info = infoSvg.append("g").attr("transform", "translate(" + 5 + "," + 50 + ")");
+            g_info.append("text")
+                    .text("10 million")
+                    .style("font-size", 50)
+                    .style("fill", "red");
+            infoSvg.append("g").attr("transform", "translate(" + 5 + "," + 70 + ")").append("text")
+                    .text("Adolescents AIDS in the year 2013")
+                    .style("font-size", 12);
+
+           var g_bar =  d3.select("#bar").append("svg")
+            .attr("width", 500)
+            .attr("height", 100)
+           .append("g").attr("transform", "translate(" +0 + "," + 10 + ")")
+           g_bar.append("rect")
+                    .attr("x", 130)
+                    .attr("y", 0)
+                    .attr("width", 200)
+                    .attr("height", 20)
+                    .style("fill", "#feb24c")
+            g_bar.append("text")
+                    .attr("x", 0)
+                    .attr("y", 10)
+                    .text("Total AIDS Population")
+                    .style("font-size", 12);
+            g_bar.append("text")
+                    .attr("x", 335)
+                    .attr("y", 10)
+                    .text("100 mil")
+                    .style("font-size", 12);
+            g_bar.append("rect")
+                    .attr("x", 130)
+                    .attr("y", 30)
+                    .attr("width", 100)
+                    .attr("height", 20)
+                    .style("fill", "#ffeda0");
+            g_bar.append("text")
+                    .attr("x", 0)
+                    .attr("y", 40)
+                    .text("Total AIDS Adolescent")
+                    .style("font-size", 12);
+            g_bar.append("text")
+                    .attr("x", 235)
+                    .attr("y", 40)
+                    .text("25 mil")
+                    .style("font-size", 12);
+        })
+     </script>
+</body>
+</html>

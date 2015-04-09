@@ -1,0 +1,12 @@
+body{
+    font-family: 'PT Sans', sans-serif;
+}
+.axis text {
+    font: 10px sans-serif;
+}
+
+.col-map{
+    width: 700px;
+    height: 500px;
+    align: left;
+}
