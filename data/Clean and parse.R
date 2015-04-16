@@ -80,15 +80,14 @@ summary_categories <- c("Andean Latin America",
 
 data_HIV <- subset(data_HIV, !(data_HIV$location_name %in% summary_categories))
 
-drop_countries <- c("Andorra",
-                    "Dominica",
-                    "Marshall Islands",
-                    "South Sudan")
+##drop_countries <- c("Andorra",
+##                    "Dominica",
+##                    "Marshall Islands",
+##                    "South Sudan")
 
-data_HIV <- subset(data_HIV, !(data_HIV$location_name %in% drop_countries))
+##data_HIV <- subset(data_HIV, !(data_HIV$location_name %in% drop_countries))
 data_HIV$mean <- as.numeric(data_HIV$mean)
-data_HIV$mean <- ifelse(data_HIV$metric=="Prevalence",data_HIV$mean/1000,data_HIV$mean)
-data_HIV$metric <- revalue(data_HIV$metric, c("Prevalence"="Prevalence %", "Deaths"="HIV Deaths, Total"))
+data_HIV$metric <- revalue(data_HIV$metric, c("Prevalence"="Prevalence rate", "Deaths"="HIV Deaths, Total"))
 
 ###############Load data for total population both sexes##################
 load("data_population_both.Rda")
@@ -103,7 +102,24 @@ data_population_both <- subset(data_population_both, data_population_both$year>1
 
 data_population_both$eightyplus <- apply(data_population_both[20:24], 1, function(x) sum(as.numeric(x)))
 
-data_population_both$"80+" <- ifelse(is.na(as.numeric(as.character(data_population_both$"80+"))),data_population_both$eightyplus, data_population_both$"80+")
+data_population_both$"80+" <- ifelse(is.na(as.numeric(as.character(data_population_both$"80+"))),as.numeric(as.character(data_population_both$eightyplus)), as.numeric(as.character(data_population_both$"80+")))
+
+data_population_both$"0-4" <- as.numeric(as.character(data_population_both$"0-4"))
+data_population_both$"5-9" <- as.numeric(as.character(data_population_both$"5-9"))
+data_population_both$"10-14" <- as.numeric(as.character(data_population_both$"10-14"))
+data_population_both$"15-19" <- as.numeric(as.character(data_population_both$"15-19"))
+data_population_both$"20-24" <- as.numeric(as.character(data_population_both$"20-24"))
+data_population_both$"25-29" <- as.numeric(as.character(data_population_both$"25-29"))
+data_population_both$"30-34" <- as.numeric(as.character(data_population_both$"30-34"))
+data_population_both$"35-39" <- as.numeric(as.character(data_population_both$"35-39"))
+data_population_both$"40-44" <- as.numeric(as.character(data_population_both$"40-44"))
+data_population_both$"45-49" <- as.numeric(as.character(data_population_both$"45-49"))
+data_population_both$"50-54" <- as.numeric(as.character(data_population_both$"50-54"))
+data_population_both$"55-59" <- as.numeric(as.character(data_population_both$"55-59"))
+data_population_both$"60-64" <- as.numeric(as.character(data_population_both$"60-64"))
+data_population_both$"65-69" <- as.numeric(as.character(data_population_both$"65-69"))
+data_population_both$"70-74" <- as.numeric(as.character(data_population_both$"70-74"))
+data_population_both$"75-79" <- as.numeric(as.character(data_population_both$"75-79"))
 
 drop = names(data_population_both) %in% c("eightyplus","80-84","85-89","90-94","95-99","100+")
 data_population_both <- data_population_both[!drop]
@@ -219,6 +235,23 @@ data_population_female$eightyplus <- apply(data_population_female[20:24], 1, fun
 
 data_population_female$"80+" <- ifelse(is.na(as.numeric(as.character(data_population_female$"80+"))),data_population_female$eightyplus, data_population_female$"80+")
 
+data_population_female$"0-4" <- as.numeric(as.character(data_population_female$"0-4"))
+data_population_female$"5-9" <- as.numeric(as.character(data_population_female$"5-9"))
+data_population_female$"10-14" <- as.numeric(as.character(data_population_female$"10-14"))
+data_population_female$"15-19" <- as.numeric(as.character(data_population_female$"15-19"))
+data_population_female$"20-24" <- as.numeric(as.character(data_population_female$"20-24"))
+data_population_female$"25-29" <- as.numeric(as.character(data_population_female$"25-29"))
+data_population_female$"30-34" <- as.numeric(as.character(data_population_female$"30-34"))
+data_population_female$"35-39" <- as.numeric(as.character(data_population_female$"35-39"))
+data_population_female$"40-44" <- as.numeric(as.character(data_population_female$"40-44"))
+data_population_female$"45-49" <- as.numeric(as.character(data_population_female$"45-49"))
+data_population_female$"50-54" <- as.numeric(as.character(data_population_female$"50-54"))
+data_population_female$"55-59" <- as.numeric(as.character(data_population_female$"55-59"))
+data_population_female$"60-64" <- as.numeric(as.character(data_population_female$"60-64"))
+data_population_female$"65-69" <- as.numeric(as.character(data_population_female$"65-69"))
+data_population_female$"70-74" <- as.numeric(as.character(data_population_female$"70-74"))
+data_population_female$"75-79" <- as.numeric(as.character(data_population_female$"75-79"))
+
 drop = names(data_population_female) %in% c("eightyplus","80-84","85-89","90-94","95-99","100+")
 data_population_female <- data_population_female[!drop]
 
@@ -270,6 +303,23 @@ data_population_male <- subset(data_population_male, data_population_male$year>1
 data_population_male$eightyplus <- apply(data_population_male[20:24], 1, function(x) sum(as.numeric(x)))
 
 data_population_male$"80+" <- ifelse(is.na(as.numeric(as.character(data_population_male$"80+"))),data_population_male$eightyplus, data_population_male$"80+")
+
+data_population_male$"0-4" <- as.numeric(as.character(data_population_male$"0-4"))
+data_population_male$"5-9" <- as.numeric(as.character(data_population_male$"5-9"))
+data_population_male$"10-14" <- as.numeric(as.character(data_population_male$"10-14"))
+data_population_male$"15-19" <- as.numeric(as.character(data_population_male$"15-19"))
+data_population_male$"20-24" <- as.numeric(as.character(data_population_male$"20-24"))
+data_population_male$"25-29" <- as.numeric(as.character(data_population_male$"25-29"))
+data_population_male$"30-34" <- as.numeric(as.character(data_population_male$"30-34"))
+data_population_male$"35-39" <- as.numeric(as.character(data_population_male$"35-39"))
+data_population_male$"40-44" <- as.numeric(as.character(data_population_male$"40-44"))
+data_population_male$"45-49" <- as.numeric(as.character(data_population_male$"45-49"))
+data_population_male$"50-54" <- as.numeric(as.character(data_population_male$"50-54"))
+data_population_male$"55-59" <- as.numeric(as.character(data_population_male$"55-59"))
+data_population_male$"60-64" <- as.numeric(as.character(data_population_male$"60-64"))
+data_population_male$"65-69" <- as.numeric(as.character(data_population_male$"65-69"))
+data_population_male$"70-74" <- as.numeric(as.character(data_population_male$"70-74"))
+data_population_male$"75-79" <- as.numeric(as.character(data_population_male$"75-79"))
 
 drop = names(data_population_male) %in% c("eightyplus","80-84","85-89","90-94","95-99","100+")
 data_population_male <- data_population_male[!drop]
@@ -398,11 +448,11 @@ data_MORTALITY$location_name <- revalue(data_MORTALITY$location_name, c('Brunei 
 ##################Append data#########################
 data_total <- rbind(data_HIV,data_MORTALITY,data_population_both, data_population_male, data_population_female)
 
-data_prevalence <- subset(data_total,data_total$metric=="Prevalence %" | data_total$metric=="Population, Total")
+data_prevalence <- subset(data_total,data_total$metric=="Prevalence rate" | data_total$metric=="Population, Total")
 
 data_prevalence <- cast(data_prevalence, location_name + year + age_group_name + sex_name ~ metric, mean)
 
-data_prevalence$"HIV+ Population, Total" <- apply(data_prevalence[5:6], 1, function(x) x[1]*(x[2]/100))
+data_prevalence$"HIV+ Population, Total" <- apply(data_prevalence[5:6], 1, function(x) x[1]*(x[2]/100000))
 
 data_prevalence <- subset(data_prevalence, select = c("location_name","year","age_group_name","sex_name","HIV+ Population, Total"))
 
@@ -411,10 +461,19 @@ colnames(data_prevalence)[5] <- "mean"
 data_prevalence$metric <- "HIV+ Population, Total"
 
 data_total <- rbind(data_total,data_prevalence)
-data_total <- subset(data_total, !(data_total$metric %in% c("Prevalence %")))
+data_total <- subset(data_total, !(data_total$metric %in% c("Prevalence rate")))
 colnames(data_total)[6] <- "value"
 
 save(data_total,file="data_total.Rda")
 
 ##Write to csv
+setwd("/Users/shannonmilroy/Documents/Harvard School Files/Spring 2015/Visualization/cs171-final-project/data")
 write.csv(data_total, "data_clean.csv")
+
+##Create collapsed version
+data_total_collapse <- melt(data_total, id = c("location_name","year", "age_group_name","sex_name","metric"))
+
+data_total_collapse <- subset(data_total_collapse, select = -variable)
+data_total_collapse <- cast(data_total_collapse, location_name + year + age_group_name + sex_name ~ metric, mean)
+
+write.csv(data_total_collapse, "data_clean_collapse.csv")
