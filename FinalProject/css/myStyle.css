@@ -10,3 +10,8 @@ body{
     height: 500px;
     align: left;
 }
+
+h2{
+    font-family: 'PT Sans', sans-serif;
+    color:salmon;
+}
