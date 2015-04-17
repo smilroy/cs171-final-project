@@ -4,8 +4,9 @@
 
 var metrics = ["prevalence", "deaths"];
 
-Map = function(_parentElement, _data, _aidsData){
+Map = function(_parentElement, _data, _aidsData, _country){
     this.parentElement = _parentElement;
+    this.countryVis = _country;
     this.data = _data;
     this.metric = metrics[0];
     this.aidsData = _aidsData;
@@ -33,9 +34,12 @@ Map.prototype.wrangleData = function()
         var prevalence_ratio = 0, death_ratio = 0;
         if(total_prevalence > 0)
             d.properties.prevalence_ratio = d.properties.aids_prevalence/total_prevalence * 100;
-
+        else
+            d.properties.prevalence_ratio = 0;
         if(total_deaths > 0)
             d.properties.death_ratio = d.properties.aids_deaths/total_deaths * 100;
+        else
+            d.properties.death_ratio = 0;
     })
     console.log(that.data);
 
@@ -55,7 +59,7 @@ Map.prototype.initMap = function() {
         .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
     console.log(this.data.features);
     // Color Scale
-    this.color = d3.scale.quantize().range(colorbrewer.Oranges[9]);
+    this.color = d3.scale.quantize().range(colorbrewer.Oranges[6]);
 
     this.wrangleData();
     this.update();
@@ -67,17 +71,10 @@ Map.prototype.update = function(){
     // Set domain for scale
     if(this.metric == metrics[0])
     {
-        var range = d3.extent(that.data.features, function (d) {return d.properties.aids_prevalence});
-        var min = range[0];
-        var max = range[1];
-        console.log("MIN ", min);
-        console.log("MAX ", max);
-        this.color.domain(d3.extent(that.data.features, function (d) {return d.properties.prevalence_ratio}));
-        //this.color.domain([max, min]);
-       for(i=0; i< colorbrewer.Oranges[9].length; i++)
-       {
-            console.log(that.color.invertExtent(colorbrewer.Oranges[9][i]));
-       }
+        this.color.domain(d3.extent(that.data.features, function (d) {
+            return d.properties.prevalence_ratio
+            }
+        ));
 
     }
     else
@@ -92,6 +89,7 @@ Map.prototype.update = function(){
 Map.prototype.updateVis = function(){
     var that = this;
     d3.selectAll(".c_path").remove();
+    d3.selectAll(".l_text").remove();
     this.svg.selectAll("path")
         .data(that.data.features)
         .enter()
@@ -107,45 +105,41 @@ Map.prototype.updateVis = function(){
         // Add mouseover event or click event to the path
         .on("mouseover", function (d){
             if(that.metric == metrics[0])
-                console.log(d.properties.name, "  ", d.properties.prevalence_ratio, "  ", d.properties.aids_prevalence);
+                that.countryVis.updateVis(d.properties, "prevalence");
             else
-                console.log(d.properties.name, "  ", d.properties.death_ratio, "  ", d.properties.aids_deaths);
+                that.countryVis.updateVis(d.properties, "deaths");
+
         })
        // .on("click", function (d){
             //console.log(d.properties.name);
        // })
-    var color_range = colorbrewer.Oranges[9].map(function(d, i){
+    var color_range = colorbrewer.Oranges[6].map(function(d, i){
         return that.color.invertExtent(d);
     })
-
-    // Draw Legend
-    //var g_legend = this.svg.append("g").attr("transform", "translate(" + 5 + "," + 50 + ")");
-
-
 
     this.svg.selectAll("rect").data(color_range).enter().append("rect")
         .attr("x", function (d) { return 0;})
         .attr("width", function(d){return 10;})
         .style("fill", function(d,i) {
-            return  colorbrewer.Oranges[9][i];
+            return  colorbrewer.Oranges[6][i];
         })
         .transition()
         .attr("height", function (d){
-           return 5;
+           return 8;
         })
         .attr("y", function(d, i) {
                 return i * 10 + 250;
         });
 
-    this.svg.selectAll("text").data(color_range).enter().append("text")
+    this.svg.selectAll("text").data(color_range).enter().append("text").attr("class", "l_text")
      .text(function(d, i){
-        return d3.round(d[0], 2) + " - " +d3.round(d[1], 2);
+        return d3.round(d[0], 2) + " - " +d3.round(d[1], 2) + " %";
      })
      .attr("x", 15)
      .attr("y", function(d, i){
-     return i * 10 + 255;
+     return i * 10 + 258;
      })
-     .style("font-size", 10);
+     .style("font-size", 9);
 }
 
 Map.prototype.updateMetric = function(selection){
