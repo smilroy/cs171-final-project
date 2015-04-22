@@ -19,6 +19,7 @@
     <!-- Project js -->
     <script src="js/map.js"></script>
     <script src="js/info.js"></script>
+    <script src="js/country.js"></script>
 </head>
 <body>
 <div class="container">
@@ -28,8 +29,6 @@
     </div>
     <div class="row">
         <div id="info" style="float:left;">
-        </div>
-        <div id="bar" style="float:left;">
         </div>
     </div>
     <div class="row">
@@ -48,7 +47,7 @@
     <div class="row">
         <div id="global-map" class ="col-md-8">
         </div>
-        <div class ="col-md-3">
+        <div id="country" class ="col-md-3">
             Individual Country Visualization
             (updated when a country is clicked or on mouseover)
         </div>
@@ -61,12 +60,12 @@
 </div>
     <script>
         $(function(){
-            var map, info, total_prevalence, total_deaths;
-            var defaultYear = "2013";
+            var map, info, country, total_prevalence, total_deaths, total_population_prevalence, total_population_deaths;
+            var defaultYear = "2010";
             var world_data, aids_data;
             queue()
                     .defer(d3.json, 'data/world_data.json')
-                    .defer(d3.csv, 'data/aids_data.csv')
+                    .defer(d3.csv, 'data/aids_data_20150419.csv')
                     .await(function (error, worldData, aidsData){
                         LoadData(error, worldData, aidsData);
                     });
@@ -78,9 +77,10 @@
                     aids_data = aidsData;
                     var data = AggregateAndFilter(defaultYear);
                    // Initialize Info Visualization
-                    info = new Info(d3.select("#info"), defaultYear, total_prevalence, total_deaths);
+                    info = new Info(d3.select("#info"), defaultYear, total_prevalence, total_deaths, total_population_prevalence, total_population_deaths);
                     // Initialize Map Visualization
-                    map = new Map(d3.select("#global-map"), data, aidsData);
+                    country = new Country(d3.select("#country"))
+                     map = new Map(d3.select("#global-map"), data, aidsData, country);
 
                 }
             }
@@ -88,8 +88,7 @@
             function AggregateAndFilter(selectedYear)
             {
                 var adolescentData = aids_data.filter(function(d){
-                    return (d.age_group_name == "10 to 14" || d.age_group_name == "15 to 19") && d.location_name !=  "Global"
-                            && d.location_name != "Developed" && d.location_name != "Developing" && d.location_name != "High-income"
+                    return (d.age_group_name == "10-14" || d.age_group_name == "15-19")
                             && d.sex_name == "Both sexes" && d.year == selectedYear; //&& d.metric == metric;
                 })
                 console.log("Filtered Data" + adolescentData);
@@ -98,18 +97,17 @@
                 worldData.features.forEach(function (d){
                     var prevalence_count = 0;
                     var death_count = 0;
+                    var count = 0;
                     adolescentData.forEach(function (a){
+                        if(count >= 2) // Do not iterate over all the countries if already found 2 records for a country
+                            return;
                         if(a.location_name == d.properties.name)
                         {
-                            //if(a.metric == "HIV+ Population, Total") {
-                            //if (a.value != "NA")
-                            if(a.metric == "Prevalence"){
-                                prevalence_count = prevalence_count + parseFloat(a.mean);
-                            }
-                            else if (a.metric == "Deaths"){
-
-                                death_count = death_count + parseFloat(a.mean);
-                            }
+                            if(a.hiv_population_total != "NA")
+                                prevalence_count = prevalence_count + parseFloat(a.hiv_population_total);
+                            if(a.hiv_deaths_total != "NA")
+                                death_count = death_count + parseFloat(a.hiv_deaths_total);
+                            count++;
                         }
                     })
                     d.properties.aids_prevalence = d3.round(prevalence_count);
@@ -120,8 +118,20 @@
                 console.log("Original world data", world_data);
                 total_prevalence = d3.sum(worldData.features, function(d){return d.properties.aids_prevalence});
                 total_deaths = d3.sum(worldData.features, function(d){return d.properties.aids_deaths});
+                // Calculate aids prevalence and deaths in total population
+                var all_population = aids_data.filter(function(d){
+                    return(d.sex_name == "Both sexes" && d.year == selectedYear);
+                })
+                total_population_prevalence = d3.sum(all_population, function(d){
+                    return d3.round(d.hiv_population_total);
+                })
+                total_population_deaths = d3.sum(all_population, function(d){
+                    return d3.round(d.hiv_deaths_total);
+                })
                 console.log("Total Prevalence", total_prevalence);
                 console.log("Total Deaths", total_deaths);
+                console.log("Total Population Prevalence", total_population_prevalence);
+                console.log("Total Population Deaths", total_population_deaths);
                 return worldData;
             }
             /**** Add UI Events ****/
@@ -134,59 +144,21 @@
                     .attr("type", "range")
                     .attr("name", "points")
                     .attr("min", "1990")
-                    .attr("max", "2013")
+                    .attr("max", "2010")
                     .attr("step", "1")
-                    .attr("value", "2013");
+                    .attr("value", "2010");
 
             var g_slider = d3.select("#sliderinfo").append("svg").attr("width", 300).attr("height", 30).append("g");
             g_slider.append("text").attr("x", 0).attr("y", 10).text("1990").style("font-size", 12);
-            g_slider.append("text").attr("x", 270).attr("y", 10).text("2013").style("font-size", 12);
+            g_slider.append("text").attr("x", 270).attr("y", 10).text("2010").style("font-size", 12);
 
             d3.select("#slider").select("input").on("input", function (d){
                 var selectedYr = d3.select(this).node().value;
                 var data = AggregateAndFilter(selectedYr);
                 map.updateYear(selectedYr, data);
                 info.updateYear(selectedYr, total_prevalence, total_deaths);
-
             })
 
-
-           var g_bar =  d3.select("#bar").append("svg")
-            .attr("width", 500)
-            .attr("height", 100)
-           .append("g").attr("transform", "translate(" +0 + "," + 10 + ")")
-           g_bar.append("rect")
-                    .attr("x", 130)
-                    .attr("y", 0)
-                    .attr("width", 200)
-                    .attr("height", 20)
-                    .style("fill", "#feb24c")
-            g_bar.append("text")
-                    .attr("x", 0)
-                    .attr("y", 10)
-                    .text("Total AIDS Population")
-                    .style("font-size", 12);
-            g_bar.append("text")
-                    .attr("x", 335)
-                    .attr("y", 10)
-                    .text("100 mil")
-                    .style("font-size", 12);
-            g_bar.append("rect")
-                    .attr("x", 130)
-                    .attr("y", 30)
-                    .attr("width", 100)
-                    .attr("height", 20)
-                    .style("fill", "#ffeda0");
-            g_bar.append("text")
-                    .attr("x", 0)
-                    .attr("y", 40)
-                    .text("Total AIDS Adolescent")
-                    .style("font-size", 12);
-            g_bar.append("text")
-                    .attr("x", 235)
-                    .attr("y", 40)
-                    .text("25 mil")
-                    .style("font-size", 12);
         })
      </script>
 </body>
