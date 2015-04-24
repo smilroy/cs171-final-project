@@ -41,10 +41,10 @@ Map.prototype.wrangleData = function()
         else
             d.properties.death_ratio = 0;
     })
-    console.log(that.data);
+    // console.log(that.data);
 
     var prevalence_ratio_range = d3.extent(that.data.features, function(d){return d.properties.prevalence_ratio})
-    console.log(prevalence_ratio_range);
+    // console.log(prevalence_ratio_range);
 }
 
 Map.prototype.initMap = function() {
@@ -57,7 +57,7 @@ Map.prototype.initMap = function() {
         .attr("height", this.height + this.margin.top + this.margin.bottom)
         .append("g")
         .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
-    console.log(this.data.features);
+    // console.log(this.data.features);
     // Color Scale
     this.color = d3.scale.quantize().range(colorbrewer.Oranges[6]);
 
@@ -147,13 +147,13 @@ Map.prototype.updateMetric = function(selection){
         this.metric = metrics[0];
     else
         this.metric = metrics[1];
-    console.log(this.metric);
+    // console.log(this.metric);
     this.update();
 }
 
 
 Map.prototype.updateYear= function(selection, updatedData){
-    console.log("Selected Year", selection);
+    // console.log("Selected Year", selection);
     this.data = updatedData;
     this.wrangleData();
     this.update();
