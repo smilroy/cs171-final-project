@@ -51,9 +51,9 @@ Info.prototype.update = function(){
     this.svg.append("g").attr("transform", "translate(" + 5 + "," + 70 + ")").attr("class", "text_g").append("text")
         .text(function(){
             if(that.metric == metrics[0])
-                return "Adolescents AIDS in the year " + that.year;
+                return "Adolescents living with HIV/AIDS in the year " + that.year;
             else
-                return "Adolescents deaths from AIDS in the year " + that.year;
+                return "Adolescents deaths from HIV/AIDS in the year " + that.year;
         } )
         .style("font-size", 12);
 

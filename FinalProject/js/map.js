@@ -4,7 +4,7 @@
 
 var metrics = ["prevalence", "deaths"];
 
-Map = function(_parentElement, _data, _aidsData, _country){
+Map = function(_parentElement, _data, _aidsData, _country, _eventHandler){
     this.parentElement = _parentElement;
     this.countryVis = _country;
     this.data = _data;
@@ -13,6 +13,7 @@ Map = function(_parentElement, _data, _aidsData, _country){
     this.margin = {top: 20, right: 20, bottom: 20, left: 0};
     this.width = 700 - this.margin.left - this.margin.right;
     this.height = 600 - this.margin.top - this.margin.bottom;
+    this.eventHandler = _eventHandler;
     this.initMap();
 
 }
@@ -108,7 +109,14 @@ Map.prototype.updateVis = function(){
                 that.countryVis.updateVis(d.properties, "prevalence");
             else
                 that.countryVis.updateVis(d.properties, "deaths");
-
+            
+            //Add event handler to update population chart
+            $(that.eventHandler).trigger("selectionChanged", d.properties.name);
+        })
+        .on("mouseout", function (d){
+        
+            //Add event handler to update population chart
+            $(that.eventHandler).trigger("selectionChanged", "world");
         })
        // .on("click", function (d){
             //console.log(d.properties.name);
