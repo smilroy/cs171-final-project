@@ -2,7 +2,21 @@ body{
     font-family: 'PT Sans', sans-serif;
 }
 .axis text {
-    font: 10px sans-serif;
+    font: 8px sans-serif;
+}
+
+.axis path {
+  display: none;
+}
+
+.axis line {
+  stroke: #fff;
+  stroke-opacity: .2;
+  shape-rendering: crispEdges;
+}
+
+.grid line {
+  stroke: #777;
 }
 
 .col-map{
@@ -20,26 +34,6 @@ svg {
   font: 10px sans-serif;
 }
 
-.yaxis path {
-  display: none;
-}
-
-.yaxis line {
-  stroke: #fff;
-  stroke-opacity: .2;
-  shape-rendering: crispEdges;
-}
-
-.xaxis path {
-  display: none;
-}
-
-.xaxis line {
-  stroke: #fff;
-  stroke-opacity: .2;
-  shape-rendering: crispEdges;
-}
-
 .barFemale {
   fill-opacity: .6;
   fill: #e377c2;
@@ -49,4 +43,3 @@ svg {
   fill-opacity: .6;
   fill: #1f77b4;
 }
-

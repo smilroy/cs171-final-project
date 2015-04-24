@@ -12,7 +12,7 @@ Population = function(_parentElement, _aidsData, _year, _country){
     this.aidsData = _aidsData;
     this.popData = [];
     this.duration = 500;
-    this.margin = {top: 20, right: 50, bottom: 50, left: 10};
+    this.margin = {top: 20, right: 50, bottom: 50, left: 50};
     this.width = 500 - this.margin.left - this.margin.right;
     this.height = 400 - this.margin.top - this.margin.bottom;
     this.barWidth = Math.floor(this.width/17) - 1;
@@ -21,14 +21,15 @@ Population = function(_parentElement, _aidsData, _year, _country){
     
     this.x = d3.scale.ordinal()
                 .domain(this.ageGroups)
-                .rangePoints([0,this.width]);
+                .rangeRoundBands([0,this.width], 0.05);
     
     this.y = d3.scale.linear()
                 .range([this.height,0]);
     
     this.yAxis = d3.svg.axis()
                     .scale(this.y)
-                    .orient("right")
+                    .orient("left")
+                    .tickSize(-this.width)
                     .tickFormat(function(d) {return Math.round(d/1e04) + "K";});
     
     this.xAxis = d3.svg.axis()
@@ -78,18 +79,12 @@ Population.prototype.initVis = function() {
                     .attr("transform", "translate(" + that.margin.left + "," + that.margin.top + ")");
     
     that.svg.append("g")
-        .attr("class", "yaxis")
-        .attr("transform", "translate(" + that.width + ",0)");
+        .attr("class", "y axis")
+        .attr("transform", "translate(" + 0 + ",0)");
     
     that.svg.append("g")
-        .attr("class", "xaxis")
-        .attr("transform", function(d){return "translate(" + 0 + "," + (that.height + 5) + ")";})
-        .append("text")
-//        .attr("y", 0)
-//        .attr("x", 9)
-//        .attr("dy", ".35em")
-//        .attr("transform", "rotate(90)")
-        .style("text-anchor", "middle");
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + this.height + ")")
 }
 
 Population.prototype.update = function(){
@@ -118,7 +113,7 @@ Population.prototype.updateVis = function(){
         var barEnterFemale = barsFemale.enter()
                              .append("rect")
                              .attr("class","barFemale")
-                            .attr("x", function(d, i) {return i * (that.width / that.popData['females'].length);})
+                            .attr("x", function(d) {return that.x(d.key);})
                             .attr("y", function(d) {return that.y(d.values[that.metric]);})
                              .attr("height", function(d){return that.height - that.y(d.values[that.metric]);})
                             .attr("width", that.barWidth);
@@ -127,7 +122,7 @@ Population.prototype.updateVis = function(){
     var barEnterMale = barsMale.enter()
                              .append("rect")
                              .attr("class","barMale")
-                            .attr("x", function(d, i) {return i * (that.width / that.popData['males'].length);})
+                            .attr("x", function(d) {return that.x(d.key);})
                             .attr("y", function(d) {return that.y(d.values[that.metric]);})
                              .attr("height", function(d){return that.height - that.y(d.values[that.metric]);})
                             .attr("width", that.barWidth);
@@ -157,13 +152,20 @@ Population.prototype.updateVis = function(){
         .attr("height",0)
         .remove();
     
-    this.svg.select(".yaxis")
+    this.svg.select(".y")
         .call(this.yAxis)
     
-    this.svg.select(".xaxis")
+    this.svg.select(".y").selectAll("g")
+            .filter(function(d){return d;})
+            .classed("grid", true);
+    
+    this.svg.select(".x")
         .call(this.xAxis)
         .selectAll("text")  
-            .style("text-anchor", "middle");
+            .style("text-anchor", "end")
+            .attr("dx", "-.8em")
+            .attr("dy", ".15em")
+            .attr("transform", "rotate(-45)");
     
 }
 
