@@ -41,8 +41,8 @@
         <div class ="col-md-1">
             <div id="filter" style="float:left; width:200px;margin-top:5px;">
                 <!-- <label>Show:</label> -->
-                <input type="radio" name="filter" value="prevalence" checked>Prevalence
-                <input type="radio" name="filter" value="deaths">Deaths
+                <input type="radio" name="filter" value="prevalence" checked> Prevalence
+                <input type="radio" name="filter" value="deaths"> Deaths
             </div>
           </div>
     </div>
@@ -84,10 +84,17 @@
                     info = new Info(d3.select("#info"), defaultYear, total_prevalence, total_deaths, total_population_prevalence, total_population_deaths);
                     // Initialize Map Visualization
                     country = new Country(d3.select("#country"));
-                     map = new Map(d3.select("#global-map"), data, aidsData, country);
+                     map = new Map(d3.select("#global-map"), data, aidsData, country, MyEventHandler);
                     population = new Population(d3.select("#country"), aidsData, defaultYear, "world");
                 }
             }
+            
+            //Add event handler to trigger population chart change when country mouse over
+            var MyEventHandler = new Object();
+            
+            $(MyEventHandler).bind("selectionChanged", function(event, country){
+                    population.onSelectionChange(country);
+            });
 
             function AggregateAndFilter(selectedYear)
             {
@@ -171,6 +178,7 @@
 
                 map.updateMetric(d3.select(this).node().value);
                 info.updateMetric(d3.select(this).node().value);
+                population.updateMetric(d3.select(this).node().value);
             })
             // Add year slider
             $( "#slider" ).slider({
@@ -188,7 +196,8 @@
                         var selectedYr =[ui.value];
                         var data = AggregateAndFilter(selectedYr);
                         map.updateYear(selectedYr, data);
-                        info.updateYear(selectedYr, total_prevalence, total_deaths)
+                        info.updateYear(selectedYr, total_prevalence, total_deaths);
+                        population.updateYear(selectedYr);
 
             });
 
