@@ -9,19 +9,24 @@
     <script src="libs/bootstrap/js/bootstrap.min.js" charset="utf-8"></script>
     <script src="http://d3js.org/queue.v1.min.js"></script>
     <script src="libs/colorbrewer.js"></script>
+    <script src="libs/jquery-ui-1.11.4.custom/jquery-ui.js"></script>
 
     <!--Stylesheets-->
     <link rel="stylesheet" type="text/css" href="libs/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.10.4/themes/flick/jquery-ui.css">
 
     <!-- Project Stylesheet -->
     <link rel="stylesheet" type="text/css" href="css/myStyle.css">
+    <link rel="stylesheet" type="text/css" href="css/pips.css">
 
     <!-- Project js -->
     <script src="js/map.js"></script>
     <script src="js/info.js"></script>
     <script src="js/country.js"></script>
     <script src="js/population.js"></script>
+    <script src="js/pips.js"></script>
 </head>
+
 <body>
 <div class="container">
      <h2>HIV epidemic in adolescents across the world</h2>
@@ -39,10 +44,10 @@
                 <input type="radio" name="filter" value="prevalence" checked>Prevalence
                 <input type="radio" name="filter" value="deaths">Deaths
             </div>
-            <div id="slider" style="width:300px;margin-top:5px;">
-            </div>
-            <div id="sliderinfo" style="width:300px;margin-top:5px;">
-            </div>
+          </div>
+    </div>
+    <div class="row">
+        <div class ="col-lg-1" id="slider" style="width:600px;">
         </div>
     </div>
     <div class="row">
@@ -64,7 +69,7 @@
             var world_data, aids_data;
             queue()
                     .defer(d3.json, 'data/world_data.json')
-                    .defer(d3.csv, 'data/aids_data_20150419.csv')
+                    .defer(d3.csv, 'data/aids_data.csv')
                     .await(function (error, worldData, aidsData){
                         LoadData(error, worldData, aidsData);
                     });
@@ -135,28 +140,57 @@
             }
             /**** Add UI Events ****/
             d3.select("#filter").selectAll("input").on("click", function() {
+                var selectedMetric = d3.select(this).node().value;
+                // Reset the slider when radio button selection changes
+                if(selectedMetric == "prevalence"){
+                    $( "#slider" ).slider({
+                        min: 1990,
+                        max:2010,
+                        step: 5,
+                        value: 2012// default selection
+                    })
+                            .slider("pips", {
+                                rest: "label"
+                            }
+                    );
+                }
+                else
+                {
+                    $( "#slider" ).slider({
+                        min: 1990,
+                        max:2010,
+                        step: 1,
+                        value: 2010
+                    })
+                            .slider("pips", {
+                                rest: "label"
+                            }
+                    );
+                }
+
+
                 map.updateMetric(d3.select(this).node().value);
                 info.updateMetric(d3.select(this).node().value);
             })
-            d3.select("#slider").
-                    append("input")
-                    .attr("type", "range")
-                    .attr("name", "points")
-                    .attr("min", "1990")
-                    .attr("max", "2010")
-                    .attr("step", "1")
-                    .attr("value", "2010");
-
-            var g_slider = d3.select("#sliderinfo").append("svg").attr("width", 300).attr("height", 30).append("g");
-            g_slider.append("text").attr("x", 0).attr("y", 10).text("1990").style("font-size", 12);
-            g_slider.append("text").attr("x", 270).attr("y", 10).text("2010").style("font-size", 12);
-
-            d3.select("#slider").select("input").on("input", function (d){
-                var selectedYr = d3.select(this).node().value;
-                var data = AggregateAndFilter(selectedYr);
-                map.updateYear(selectedYr, data);
-                info.updateYear(selectedYr, total_prevalence, total_deaths);
+            // Add year slider
+            $( "#slider" ).slider({
+                min: 1990,
+                max:2010,
+                step: 5,
+                value: 2010
             })
+                    .slider("pips", {
+                        rest: "label"
+                    }
+            )
+            .on("slidechange", function(e,ui) {
+               // $(console.log([ui.value]);
+                        var selectedYr =[ui.value];
+                        var data = AggregateAndFilter(selectedYr);
+                        map.updateYear(selectedYr, data);
+                        info.updateYear(selectedYr, total_prevalence, total_deaths)
+
+            });
 
         })
      </script>

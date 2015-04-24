@@ -133,7 +133,7 @@ Map.prototype.updateVis = function(){
 
     this.svg.selectAll("text").data(color_range).enter().append("text").attr("class", "l_text")
      .text(function(d, i){
-        return d3.round(d[0], 2) + " - " +d3.round(d[1], 2) + " %";
+        return d3.round(d[0], 1) + " - " +d3.round(d[1], 1) + " %";
      })
      .attr("x", 15)
      .attr("y", function(d, i){
