@@ -20,6 +20,7 @@
     <script src="js/map.js"></script>
     <script src="js/info.js"></script>
     <script src="js/country.js"></script>
+    <script src="js/population.js"></script>
 </head>
 <body>
 <div class="container">
@@ -48,8 +49,6 @@
         <div id="global-map" class ="col-md-8">
         </div>
         <div id="country" class ="col-md-3">
-            Individual Country Visualization
-            (updated when a country is clicked or on mouseover)
         </div>
     </div>
     <div class="row">
@@ -79,9 +78,9 @@
                    // Initialize Info Visualization
                     info = new Info(d3.select("#info"), defaultYear, total_prevalence, total_deaths, total_population_prevalence, total_population_deaths);
                     // Initialize Map Visualization
-                    country = new Country(d3.select("#country"))
+                    country = new Country(d3.select("#country"));
                      map = new Map(d3.select("#global-map"), data, aidsData, country);
-
+                    population = new Population(d3.select("#country"), aidsData, defaultYear, "world");
                 }
             }
 
