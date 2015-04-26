@@ -14,12 +14,35 @@ Trends = function(_parentElement, _aidsData, _country){
     this.width = 700 - this.margin.left - this.margin.right;
     this.height = 300 - this.margin.top - this.margin.bottom;
 
+    this.sum_all = [];
+    this.sum_adolescent = [];
+
     this.wrangleData();
     this.initVis();
     this.updateVis();
 }
 
 Trends.prototype.wrangleData = function() {
+
+    var that = this;
+
+    var all_data = this.aidsData.filter(function(d) {
+        return (d.sex_name == 'Both sexes' && d.location_name == 'India');
+    //  return (d.sex_name == 'Both sexes' && d.location_name == that.country); 
+    })
+
+    that.sum_all = d3.nest().key(function(d){return d.year;})
+        .rollup(function(leaves){return {"prevalence": d3.sum(leaves, function(d){return d.hiv_population_total;}), "deaths": d3.sum(leaves, function(d){return d.hiv_deaths_total;})};})
+        .entries(all_data);
+
+    var adolescent_data = this.aidsData.filter(function(d) {
+        return (d.sex_name == 'Both sexes' && (d.age_group_name == '10-14' || d.age_group_name == '15-19'));
+    })
+
+    that.sum_adolescent = d3.nest().key(function(d){return d.year;})
+        .rollup(function(leaves){return {"prevalence": d3.sum(leaves, function(d){return d.hiv_population_total;}), "deaths": d3.sum(leaves, function(d){return d.hiv_deaths_total;})};})
+        .entries(adolescent_data);
+
 }
 
 Trends.prototype.initVis = function() {
@@ -43,7 +66,7 @@ Trends.prototype.initVis = function() {
         .attr("class", "x axis")
         .attr("transform", "translate(0," + that.height + ")")
 
-    that.x = d3.time.scale()
+    that.x = d3.scale.linear()
     	.range([0, that.width]);
 
     that.y0 = d3.scale.linear()
@@ -57,40 +80,68 @@ Trends.prototype.initVis = function() {
     	.orient("bottom");
 
     that.yAxisLeft = d3.svg.axis()
-    	.scale(that.y)
+    	.scale(that.y0)
     	.orient("left");
 
     that.yAxisRight = d3.svg.axis()
-    	.scale(that.y)
+    	.scale(that.y1)
     	.orient("right");
-
-    that.line0 = d3.svg.line()
-    	.x()
-    	.y();
-
-    that.line2 = d3.svg.line()
-    	.x()
-    	.y();
 
 }
 
 Trends.prototype.updateVis = function(){
     var that = this;
 
-    that.x.domain();
-    that.y0.domain();
-    that.y1.domain();
+    that.x.domain([1990, 2010]);
+    that.y0.domain([0, d3.max(that.sum_all, function(d) {return d.values[that.metric];})]);
+    that.y1.domain([0, d3.max(that.sum_adolescent, function(d) {return d.values[that.metric];})]);
+    
+    var line0 = d3.svg.line()
+        .x(function(d) {return that.x(d.key)})
+        .y(function(d) {return that.y0(d.values[that.metric])});
+
+    var line1 = d3.svg.line()
+        .x(function(d) {return that.x(d.key)})
+        .y(function(d) {return that.y1(d.values[that.metric])});
+
+    var path0 = that.svg.append("path")
+        .attr("d", function(d) {return line0(that.sum_all)})
+
+    var path1 = that.svg.append("path")
+        .attr("d", function(d) {return line1(that.sum_adolescent)})
+
+    // ENTER
+
+    // AXES
 
     that.svg.select(".x.axis")
-        .call(this.xAxis);
+        .call(that.xAxis)
 
     that.svg.select(".y.axis")
-        .call(this.yAxisLeft)
+        .call(that.yAxisLeft)
 
     that.svg.select(".y.axis")
-        .call(this.yAxisRight)        
+        .call(that.yAxisRight)
 
 }
 
+/**
+ * Update object metric parameter
+ */
 Trends.prototype.updateMetric = function(selection){
+    if(selection == metrics[0])
+        this.metric = metrics[0];
+    else
+        this.metric = metrics[1];
+
+    this.updateVis();
+}
+
+/**
+ * Update object country parameter
+ */
+Trends.prototype.onSelectionChange = function(country){
+    this.country = country;
+    this.wrangleData();
+    this.updateVis();
 }
