@@ -22,7 +22,6 @@
     <!-- Project js -->
     <script src="js/map.js"></script>
     <script src="js/info.js"></script>
-    <script src="js/country.js"></script>
     <script src="js/population.js"></script>
     <script src="js/pips.js"></script>
     <script src="js/trends.js"></script>
@@ -41,7 +40,6 @@
     <div class="row">
         <div class ="col-md-1">
             <div id="filter" style="float:left; width:200px;margin-top:5px;">
-                <!-- <label>Show:</label> -->
                 <input type="radio" name="filter" value="prevalence" checked> Prevalence
                 <input type="radio" name="filter" value="deaths"> Deaths
             </div>
@@ -57,11 +55,14 @@
         <div id="global-map" class ="col-md-8">
         </div>
         <div id="country" class ="col-md-3">
+
         </div>
     </div>
     <div class="row">
         <div id="trend_vis" class="col-map">
         </div>
+    </div>
+    <div id="tooltip" class="tooltip" style="opacity:0">
     </div>
 </div>
     <script>
@@ -113,7 +114,7 @@
                     return (d.age_group_name == "10-14" || d.age_group_name == "15-19")
                             && d.sex_name == "Both sexes" && d.year == selectedYear; //&& d.metric == metric;
                 })
-                // console.log("Filtered Data" + adolescentData);
+
                 var worldData = world_data;
                 // For each country iterate through adolescentData
                 worldData.features.forEach(function (d){
@@ -136,8 +137,6 @@
                     d.properties.aids_deaths = d3.round(death_count);
                 })
 
-                // console.log("Filtered world data", worldData);
-                // console.log("Original world data", world_data);
                 total_prevalence = d3.sum(worldData.features, function(d){return d.properties.aids_prevalence});
                 total_deaths = d3.sum(worldData.features, function(d){return d.properties.aids_deaths});
                 // Calculate aids prevalence and deaths in total population
@@ -150,10 +149,7 @@
                 total_population_deaths = d3.sum(all_population, function(d){
                     return d3.round(d.hiv_deaths_total);
                 })
-                // console.log("Total Prevalence", total_prevalence);
-                // console.log("Total Deaths", total_deaths);
-                // console.log("Total Population Prevalence", total_population_prevalence);
-                // console.log("Total Population Deaths", total_population_deaths);
+
                 return worldData;
             }
             /**** Add UI Events ****/
@@ -203,7 +199,6 @@
                     }
             )
             .on("slidechange", function(e,ui) {
-               // $(console.log([ui.value]);
                         var selectedYr =[ui.value];
                         var data = AggregateAndFilter(selectedYr);
                         map.updateYear(selectedYr, data);

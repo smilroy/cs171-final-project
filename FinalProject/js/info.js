@@ -32,7 +32,6 @@ Info.prototype.update = function(){
     var that = this;
     d3.select(".info_g").remove();
     d3.select(".text_g").remove();
-    d3.select(".bar_g").remove();
 
     var g_info = this.svg.append("g")
         .attr("class", "info_g")
@@ -57,82 +56,6 @@ Info.prototype.update = function(){
         } )
         .style("font-size", 12);
 
-    // Draw bar to show total population vs adolescent population comparison
-    var g_bar =  this.svg.append("g")
-        .attr("class", "bar_g")
-        .append("g").attr("transform", "translate(" + (this.margin.left + 280)+ "," + 20 + ")")
-
-    g_bar.append("rect")
-        .attr("x", 150)
-        .attr("y", 0)
-        .attr("width", function(d){
-            if(that.metric == metrics[0])
-                return that.rect(that.totalPopulationPrevalence);
-            else
-                return that.rect(that.totalPopulationDeaths);
-        })
-        .attr("height", 20)
-        .style("fill", "#feb24c")
-        .on("mouseover", function(d){
-            d3.select(this).append("svg:title")
-                .text(function(t){
-                    if(that.metric == metrics[0])
-                        return  "AIDS in total population: " + formatter(that.totalPopulationPrevalence).replace('M', 'million').replace('k', 'K');
-                    else
-                        return  "AIDS deaths in total population: " + formatter(that.totalPopulationDeaths).replace('M', 'million').replace('k', 'K');
-                })
-                .style("font-size", "20px")
-                .style("fill", "red")
-
-        })
-
-    g_bar.append("text")
-        .attr("x", 0)
-        .attr("y", 10)
-        .text(function (d){
-            return "Total Population";
-            /*if(that.metric == metrics[0])
-                return "Total Population";
-            else
-                return "Total Population"*/
-        })
-        .style("font-size", 12);
-
-    g_bar.append("rect")
-        .attr("x", 150)
-        .attr("y", 30)
-        .attr("width",  function(d){
-            if(that.metric == metrics[0])
-                return that.rect(that.totalPrevalence);
-            else
-                return that.rect(that.totalDeaths);
-        })
-        .attr("height", 20)
-        .style("fill", "#ffeda0")
-        .on("mouseover", function(d){
-            d3.select(this).append("svg:title")
-                .text(function(t){
-                    if(that.metric == metrics[0])
-                        return  "AIDS in adolescent population: " + formatter(that.totalPrevalence).replace('M', 'million').replace('k', 'K');
-                    else
-                        return  "AIDS deaths in adolescent population: " + formatter(that.totalDeaths).replace('M', 'million').replace('k', 'K');
-                })
-                .style("font-size", "20px")
-                .style("fill", "red")
-
-        })
-    g_bar.append("text")
-        .attr("x", 0)
-        .attr("y", 40)
-        .text(function (d){
-            return "Adolescent Population"
-           /* if(that.metric == metrics[0])
-                return "Adolescent Population";
-            else
-                return "AIDS deaths in Adolescent Population"*/
-        })
-        .style("font-size", 12);
-
 }
 
 Info.prototype.updateMetric = function(selection){
@@ -153,8 +76,7 @@ Info.prototype.updateMetric = function(selection){
 
 
 Info.prototype.updateYear= function(selection, totalPrevalence, totalDeaths){
-    console.log("Selected Year", selection);
-    this.year = selection;
+      this.year = selection;
     this.totalPrevalence = totalPrevalence;
     this.totalDeaths = totalDeaths;
 
