@@ -98,7 +98,7 @@
                   
                     map = new Map(d3.select("#global-map"), data, aidsData, MyEventHandler);
                     population = new Population(d3.select("#country"), aidsData, defaultYear, "Global");
-                    trends = new Trends(d3.select('#trend_vis'), aidsData, country);
+                    trends = new Trends(d3.select('#trend_vis'), aidsData, "Global");
                 }
             }
             
@@ -106,7 +106,8 @@
             var MyEventHandler = new Object();
             
             $(MyEventHandler).bind("selectionChanged", function(event, country){
-                    population.onSelectionChange(country);
+                    population.onSelectionChange(country)
+                    trends.onSelectionChange(country);
             });
 
             function AggregateAndFilter(selectedYear)

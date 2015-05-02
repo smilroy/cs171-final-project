@@ -26,18 +26,29 @@ Trends.prototype.wrangleData = function() {
 
     var that = this;
 
-    var all_data = this.aidsData.filter(function(d) {
-        return (d.sex_name == 'Both sexes' && d.location_name == 'India');
-    //  return (d.sex_name == 'Both sexes' && d.location_name == that.country); 
-    })
+    if (this.country == "Global") {
+        var all_data = this.aidsData.filter(function(d) {
+            return (d.sex_name == 'Both sexes');
+        });
+    } else {
+        var all_data = this.aidsData.filter(function(d) {
+            return (d.sex_name == 'Both sexes' && d.location_name == that.country);
+        });
+    }
 
     that.sum_all = d3.nest().key(function(d){return d.year;})
         .rollup(function(leaves){return {"prevalence": d3.sum(leaves, function(d){return d.hiv_population_total;}), "deaths": d3.sum(leaves, function(d){return d.hiv_deaths_total;})};})
         .entries(all_data);
 
-    var adolescent_data = this.aidsData.filter(function(d) {
-        return (d.sex_name == 'Both sexes' && (d.age_group_name == '10-14' || d.age_group_name == '15-19'));
-    })
+    if (this.country == "Global") {
+        var adolescent_data = this.aidsData.filter(function(d) {
+            return (d.sex_name == 'Both sexes' && (d.age_group_name == '10-14' || d.age_group_name == '15-19'));
+        });
+    } else {
+        var adolescent_data = this.aidsData.filter(function(d) {
+            return (d.sex_name == 'Both sexes' && (d.age_group_name == '10-14' || d.age_group_name == '15-19') && d.location_name == that.country);
+        });
+    }
 
     that.sum_adolescent = d3.nest().key(function(d){return d.year;})
         .rollup(function(leaves){return {"prevalence": d3.sum(leaves, function(d){return d.hiv_population_total;}), "deaths": d3.sum(leaves, function(d){return d.hiv_deaths_total;})};})
@@ -113,31 +124,48 @@ Trends.prototype.updateVis = function(){
 
     // ENTER
 
-    path0.enter()
-        .append("path")
-        .attr("class","line0")
-        .attr("d", function(d) {return line0(that.sum_all)})
+    var path0update = path0.enter()
+        .append("g")
         .attr("stroke", '#4393c3')
         .attr("stroke-width", 1)
         .attr("fill", "none");
 
-    path1.enter()
-        .append("path")
-        .attr("class","line1")
-        .attr("d", function(d) {return line1(that.sum_adolescent)})
+    var path1update = path1.enter()
+        .append("g")
         .attr("stroke", '#f4a582')
         .attr("stroke-width", 1)
         .attr("fill", "none");
 
-
     // ENTER + UPDATE
+
+    path0update
+        .append("path")
+        .attr("class", "line0")
+
+    d3.transition()
+        .duration(this.duration)
+        .selectAll(".line0")
+        .attr("d", function(d) {return line0(that.sum_all)})
+
+    path1update
+        .append("path")
+        .attr("class", "line1")
+
+    d3.transition()
+        .duration(this.duration)
+        .selectAll(".line1")
+        .attr("d", function(d) {return line1(that.sum_adolescent)})
 
     // EXIT
 
     path0.exit()
+        .transition()
+        .duration(this.duration)    
         .remove();
 
     path1.exit()
+        .transition()
+        .duration(this.duration)    
         .remove();
 
     // AXES
