@@ -55,11 +55,11 @@ Trends.prototype.initVis = function() {
         .attr("transform", "translate(" + that.margin.left + "," + that.margin.top + ")");
     
     that.svg.append("g")
-        .attr("class", "y axis")
+        .attr("class", "y0 axis")
         .attr("transform", "translate(" + 0 + ",0)");
 
     that.svg.append("g")
-        .attr("class", "y axis")
+        .attr("class", "y1 axis")
         .attr("transform", "translate(" + that.width + ",0)");
     
     that.svg.append("g")
@@ -81,18 +81,19 @@ Trends.prototype.initVis = function() {
 
     that.yAxisLeft = d3.svg.axis()
     	.scale(that.y0)
-    	.orient("left");
+    	.orient("left")
+        .ticks(6);
 
     that.yAxisRight = d3.svg.axis()
     	.scale(that.y1)
-    	.orient("right");
-
+    	.orient("right")
+        .ticks(6);
 }
 
 Trends.prototype.updateVis = function(){
     var that = this;
 
-    that.x.domain([1990, 2010]);
+    that.x.domain(d3.extent(that.sum_all, function(d) {return d.key }));
     that.y0.domain([0, d3.max(that.sum_all, function(d) {return d.values[that.metric];})]);
     that.y1.domain([0, d3.max(that.sum_adolescent, function(d) {return d.values[that.metric];})]);
     
@@ -104,23 +105,50 @@ Trends.prototype.updateVis = function(){
         .x(function(d) {return that.x(d.key)})
         .y(function(d) {return that.y1(d.values[that.metric])});
 
-    var path0 = that.svg.append("path")
-        .attr("d", function(d) {return line0(that.sum_all)})
+    var path0 = that.svg.selectAll("body")
+        .data(that.sum_all)
 
-    var path1 = that.svg.append("path")
-        .attr("d", function(d) {return line1(that.sum_adolescent)})
+    var path1 = that.svg.selectAll("body")
+        .data(that.sum_adolescent)
 
     // ENTER
+
+    path0.enter()
+        .append("path")
+        .attr("class","line0")
+        .attr("d", function(d) {return line0(that.sum_all)})
+        .attr("stroke", '#4393c3')
+        .attr("stroke-width", 1)
+        .attr("fill", "none");
+
+    path1.enter()
+        .append("path")
+        .attr("class","line1")
+        .attr("d", function(d) {return line1(that.sum_adolescent)})
+        .attr("stroke", '#f4a582')
+        .attr("stroke-width", 1)
+        .attr("fill", "none");
+
+
+    // ENTER + UPDATE
+
+    // EXIT
+
+    path0.exit()
+        .remove();
+
+    path1.exit()
+        .remove();
 
     // AXES
 
     that.svg.select(".x.axis")
         .call(that.xAxis)
 
-    that.svg.select(".y.axis")
+    that.svg.select(".y0.axis")
         .call(that.yAxisLeft)
 
-    that.svg.select(".y.axis")
+    that.svg.select(".y1.axis")
         .call(that.yAxisRight)
 
 }
