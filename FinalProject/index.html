@@ -114,6 +114,7 @@
             
             $(MapClick).bind("selectionChanged", function(event, country){
                     population.onSelectionChange(country);
+                    trends.onSelectionChange(country);
                     document.getElementById("drop").selectedIndex = country_names.indexOf(country);
                     $(MenuChange).trigger("MenuChanged");
             });
@@ -131,6 +132,8 @@
                             })
                     name = "#" + $(".drop").val();
                     d3.select(name).style("fill","#4393c3");
+
+                    trends.onSelectionChange($(".drop").val());
             });
 
             function AggregateAndFilter(selectedYear)

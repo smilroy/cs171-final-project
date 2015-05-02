@@ -24,15 +24,17 @@ Trends = function(_parentElement, _aidsData, _country){
 
 Trends.prototype.wrangleData = function() {
 
+// Filtering data in a really ugly way for now...
+
     var that = this;
 
     if (this.country == "Global") {
         var all_data = this.aidsData.filter(function(d) {
-            return (d.sex_name == 'Both sexes');
+            return (d.sex_name == 'Both sexes' && (d.year == '1990' || d.year == '1995' || d.year == '2000' || d.year == '2005' || d.year == '2010'));
         });
     } else {
         var all_data = this.aidsData.filter(function(d) {
-            return (d.sex_name == 'Both sexes' && d.location_name == that.country);
+            return (d.sex_name == 'Both sexes' && d.location_name == that.country && (d.year == '1990' || d.year == '1995' || d.year == '2000' || d.year == '2005' || d.year == '2010'));
         });
     }
 
@@ -42,11 +44,11 @@ Trends.prototype.wrangleData = function() {
 
     if (this.country == "Global") {
         var adolescent_data = this.aidsData.filter(function(d) {
-            return (d.sex_name == 'Both sexes' && (d.age_group_name == '10-14' || d.age_group_name == '15-19'));
+            return (d.sex_name == 'Both sexes' && (d.age_group_name == '10-14' || d.age_group_name == '15-19') && (d.year == '1990' || d.year == '1995' || d.year == '2000' || d.year == '2005' || d.year == '2010'));
         });
     } else {
         var adolescent_data = this.aidsData.filter(function(d) {
-            return (d.sex_name == 'Both sexes' && (d.age_group_name == '10-14' || d.age_group_name == '15-19') && d.location_name == that.country);
+            return (d.sex_name == 'Both sexes' && (d.age_group_name == '10-14' || d.age_group_name == '15-19') && d.location_name == that.country && (d.year == '1990' || d.year == '1995' || d.year == '2000' || d.year == '2005' || d.year == '2010'));
         });
     }
 
@@ -88,7 +90,9 @@ Trends.prototype.initVis = function() {
 
     that.xAxis = d3.svg.axis()
     	.scale(that.x)
-    	.orient("bottom");
+    	.orient("bottom")
+        .ticks(5)
+        .tickFormat(function(d) {return d3.format('')(Math.round(d));});
 
     that.yAxisLeft = d3.svg.axis()
     	.scale(that.y0)
@@ -109,10 +113,12 @@ Trends.prototype.updateVis = function(){
     that.y1.domain([0, d3.max(that.sum_adolescent, function(d) {return d.values[that.metric];})]);
     
     var line0 = d3.svg.line()
+        .interpolate("basis")
         .x(function(d) {return that.x(d.key)})
         .y(function(d) {return that.y0(d.values[that.metric])});
 
     var line1 = d3.svg.line()
+        .interpolate("basis")
         .x(function(d) {return that.x(d.key)})
         .y(function(d) {return that.y1(d.values[that.metric])});
 
