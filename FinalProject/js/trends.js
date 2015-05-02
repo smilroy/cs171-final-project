@@ -110,11 +110,14 @@ Trends.prototype.updateVis = function(){
     
     var line0 = d3.svg.line()
         .x(function(d) {return that.x(d.key)})
-        .y(function(d) {return that.y0(d.values[that.metric])});
+        .y(function(d) {return that.y0(d.values[that.metric])})
+        .defined(function(d) {return d.values[that.metric]});
+
 
     var line1 = d3.svg.line()
         .x(function(d) {return that.x(d.key)})
-        .y(function(d) {return that.y1(d.values[that.metric])});
+        .y(function(d) {return that.y1(d.values[that.metric])})
+//        .defined(function(d) {return d.values[that.metric]});
 
     var path0 = that.svg.selectAll("body")
         .data(that.sum_all)
@@ -142,10 +145,21 @@ Trends.prototype.updateVis = function(){
         .append("path")
         .attr("class", "line0")
 
+    path0update
+        .append("circle")
+        .attr("class", "dot")
+
     d3.transition()
         .duration(this.duration)
         .selectAll(".line0")
         .attr("d", function(d) {return line0(that.sum_all)})
+
+    d3.transition()
+        .duration(this.duration)
+        .selectAll(".dot")
+        .attr("cx", function(d) {return that.x(d.key)})
+        .attr("cy", function(d) {return that.y0(d.values[that.metric])})
+        .attr("r", 3.5);
 
     path1update
         .append("path")
