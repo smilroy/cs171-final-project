@@ -84,29 +84,43 @@
                     aids_data = aidsData;
                     var data = AggregateAndFilter(defaultYear);
                     
-                    //Add country drop-down menu for population chart
-                    drop_down = d3.select("#menu").append("select");
-                    //Create drop down menu options
-                    country_names = d3.set(aids_data.map(function(d){return d.location_name;})).values();
-                    drop_down.append("option").text("Global")
-                    drop_down.selectAll("option").data(country_names).enter().append("option")
-                            .text(function(d){return d;})
+                    //Add country drop-down menu for population chart and event handler
+                    d3.select("#menu").append("select").attr("class","drop").attr("id","drop");
+                    d3.select(".drop").on("change", function(d){$(MenuChange).trigger("MenuChanged")});
                     
                    // Initialize Info Visualization
                     info = new Info(d3.select("#info"), defaultYear, total_prevalence, total_deaths, total_population_prevalence, total_population_deaths);
-                    // Initialize Map Visualization
-                  
-                    map = new Map(d3.select("#global-map"), data, aidsData, MyEventHandler);
+                    
+                    // Initialize Map, population and trend Visualization
+                    map = new Map(d3.select("#global-map"), data, aidsData, MapClick);
                     population = new Population(d3.select("#country"), aidsData, defaultYear, "Global");
                     trends = new Trends(d3.select('#trend_vis'), aidsData, country);
+                    
+                    //Create drop down menu options and event handler
+                    country_names = d3.set(aids_data.map(function(d){return d.location_name;})).values();
+                    d3.select(".drop").append("option")
+                             .text("Global")
+                             .attr("value","Global")
+                             .attr("selected", "selected");
+                    
+                    d3.select(".drop").selectAll("option").data(country_names).enter().append("option")
+                            .text(function(d){return d;})
+                            .attr("value",function(d){return d;});
                 }
             }
             
             //Add event handler to trigger population chart change when country mouse over
-            var MyEventHandler = new Object();
+            var MapClick = new Object();
             
-            $(MyEventHandler).bind("selectionChanged", function(event, country){
+            $(MapClick).bind("selectionChanged", function(event, country){
                     population.onSelectionChange(country);
+                    document.getElementById("drop").selectedIndex = country_names.indexOf(country);
+            });
+            
+            var MenuChange = new Object();
+            
+            $(MenuChange).bind("MenuChanged", function(event){
+                    population.onSelectionChange($(".drop").val());
             });
 
             function AggregateAndFilter(selectedYear)

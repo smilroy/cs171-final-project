@@ -106,10 +106,10 @@ Map.prototype.updateVis = function(){
             // Update tooltip
             var data;
             if(that.metric == metrics[0]) {
-                data = "Prevalence: " + d.properties.aids_prevalence;
+                data = "Prevalence: " + d3.format(',')(d.properties.aids_prevalence);
             }
             else{
-                data = "Deaths: " + d.properties.aids_deaths;
+                data = "Deaths: " + d3.format(',')(d.properties.aids_deaths);
             }
             d3.select(".tooltip").transition()
                 .duration(20)
