@@ -31,7 +31,7 @@ Population = function(_parentElement, _aidsData, _year, _country){
                     .scale(this.y)
                     .orient("left")
                     .tickSize(-this.width)
-                    .tickFormat(function(d) {return Math.round(d);});
+                    .tickFormat(function(d) {return d3.format(',')(Math.round(d));});
     
     this.xAxis = d3.svg.axis()
                     .scale(this.x)
@@ -52,7 +52,7 @@ Population.prototype.wrangleData = function()
     var that = this;
     
     //Filter by year and country
-    if(this.country=="world"){
+    if(this.country=="Global"){
         var year_data = this.aidsData.filter(function(d){
                 return (d.year==that.year && d.sex_name!= "Both sexes");
         })    
@@ -109,6 +109,32 @@ Population.prototype.initVis = function() {
     that.svg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + this.height + ")")
+    
+    //Add title
+    that.svg.append("text")
+        .attr("class", "title")
+        .attr("x", (that.width/2))
+        .attr("y", 0 - (that.margin.top/2))
+        .attr("text-anchor", "middle")
+    
+    //Add legend
+    that.legend = that.svg.append("g")
+        .attr("class", "legend")
+        .attr("transform", "translate(" + that.width/3 + "," + 0 + ")");
+    
+    that.legend.selectAll("rect").data(["#f4a582", "#4393c3"]).enter().append("rect")
+        .attr("x", function(d,i){return (that.width/5) * i})
+        .attr("width", 10)
+        .style("fill", function(d) {return  d;})
+        .attr("height", 10)
+        .attr("y", that.height + (that.margin.bottom/1.5));
+    
+    that.legend.selectAll("text").data(["Female", "Male"]).enter().append("text")
+        .attr("x", function(d,i){return (that.width/5) * i + 15})
+        .attr("width", 10)
+        .attr("height", 10)
+        .text(function(d) {return  d;})
+        .attr("y", that.height + (that.margin.bottom/1.19));
 }
 
 /**
@@ -118,6 +144,10 @@ Population.prototype.initVis = function() {
 
 Population.prototype.updateVis = function(){
     var that = this;
+
+    //Update chart title
+    d3.selectAll("text.title")
+        .text(that.country + ": " + "HIV " + that.metric + ", by age group and sex");
     
     //Find maximum bar value and set y axis domain
     max_female = d3.max(that.popData['females'], function(d){return d.values[that.metric];});

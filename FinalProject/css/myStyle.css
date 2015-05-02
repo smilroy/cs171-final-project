@@ -1,8 +1,24 @@
 body{
-    font-family: 'PT Sans', sans-serif;
+    font-family: 'Avenir', sans-serif;
 }
+
+.col-map{
+    width: 700px;
+    height: 500px;
+    align: left;
+}
+
+h2{
+    font-family: 'Avenir', sans-serif;
+    color:maroon;
+}
+
+svg {
+  font: 10px 'Avenir';
+}
+
 .axis text {
-    font: 8px sans-serif;
+    font: 8px 'Avenir';
 }
 
 .axis path {
@@ -19,19 +35,9 @@ body{
   stroke: #777;
 }
 
-.col-map{
-    width: 700px;
-    height: 500px;
-    align: left;
-}
-
-h2{
-    font-family: 'PT Sans', sans-serif;
-    color:maroon;
-}
-
-svg {
-  font: 10px sans-serif;
+.title {
+  font: 13px 'Avenir';
+  color: #999;
 }
 
 .barFemale {

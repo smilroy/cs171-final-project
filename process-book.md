@@ -19,6 +19,10 @@ Mortality: http://ghdx.healthdata.org/global-burden-disease-study-2010-gbd-2010-
 
 ### Exploratory Data Analysis
 
+- death rate amongst adolescents has increased by 50\% in the last decade whereas death rates amongst the total population have dropped by 30\%
+
+- 50\% of new infections happen between 15-24 years of age
+
 ### Design Evolution
 
 ### Implementation

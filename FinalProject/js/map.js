@@ -104,20 +104,16 @@ Map.prototype.updateVis = function(){
                 return that.color(d.properties.death_ratio);
        })
         // Add mouseover event or click event to the path
-        .on("mouseover", function (d){
-            if(that.metric == metrics[0])
-                that.countryVis.updateVis(d.properties, "prevalence");
-            else
-                that.countryVis.updateVis(d.properties, "deaths");
+        .on("click", function (d){
             
             //Add event handler to update population chart
             $(that.eventHandler).trigger("selectionChanged", d.properties.name);
         })
-        .on("mouseout", function (d){
-        
-            //Add event handler to update population chart
-            $(that.eventHandler).trigger("selectionChanged", "world");
-        })
+//        .on("mouseout", function (d){
+//        
+//            //Add event handler to update population chart
+//            $(that.eventHandler).trigger("selectionChanged", "Global");
+//        })
        // .on("click", function (d){
             //console.log(d.properties.name);
        // })
