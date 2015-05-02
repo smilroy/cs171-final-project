@@ -115,12 +115,22 @@
             $(MapClick).bind("selectionChanged", function(event, country){
                     population.onSelectionChange(country);
                     document.getElementById("drop").selectedIndex = country_names.indexOf(country);
+                    $(MenuChange).trigger("MenuChanged");
             });
             
             var MenuChange = new Object();
             
             $(MenuChange).bind("MenuChanged", function(event){
                     population.onSelectionChange($(".drop").val());
+                    var that = map;
+                    d3.selectAll(".c_path").style("fill", function(d) {
+                            if(that.metric == metrics[0])
+                                return that.color(d.properties.prevalence_ratio);
+                            else
+                                return that.color(d.properties.death_ratio);
+                            })
+                    name = "#" + $(".drop").val();
+                    d3.select(name).style("fill","#4393c3");
             });
 
             function AggregateAndFilter(selectedYear)
@@ -202,6 +212,7 @@
                 info.updateMetric(d3.select(this).node().value);
                 population.updateMetric(d3.select(this).node().value);
                 trends.updateMetric(d3.select(this).node().value);
+                $(MenuChange).trigger("MenuChanged");
             })
             // Add year slider
             $( "#slider" ).slider({
@@ -220,7 +231,7 @@
                         map.updateYear(selectedYr, data);
                         info.updateYear(selectedYr, total_prevalence, total_deaths);
                         population.updateYear(selectedYr);
-
+                        $(MenuChange).trigger("MenuChanged");
             });
         })
      </script>

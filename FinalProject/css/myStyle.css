@@ -72,3 +72,7 @@ div.tooltip {
     border-radius: 5px;
     pointer-events: none;
 }
+    
+.mapClick {
+   fill: green; 
+}

@@ -31,7 +31,13 @@ Population = function(_parentElement, _aidsData, _year, _country){
                     .scale(this.y)
                     .orient("left")
                     .tickSize(-this.width)
-                    .tickFormat(function(d) {return d3.format(',')(Math.round(d));});
+                    .tickFormat(function(d) {
+                        if(d>=1){
+                            return d3.format(',')(d3.round(d,0));
+                        }else{
+                            return d3.format(',')(d3.round(d,2));    
+                        }
+                    });
     
     this.xAxis = d3.svg.axis()
                     .scale(this.x)

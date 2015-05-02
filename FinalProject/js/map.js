@@ -91,6 +91,7 @@ Map.prototype.updateVis = function(){
         .append("path")
         .attr("d", this.path)
         .attr("class", "c_path")
+        .attr("id", function(d){return d.properties.name;})
         .style("fill", function(d) {
             if(that.metric == metrics[0])
                 return that.color(d.properties.prevalence_ratio);
