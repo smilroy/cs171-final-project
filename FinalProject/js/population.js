@@ -172,7 +172,9 @@ Population.prototype.updateVis = function(){
                             .attr("x", function(d) {return that.x(d.key);})
                             .attr("y", function(d) {return that.y(d.values[that.metric]);})
                              .attr("height", function(d){return that.height - that.y(d.values[that.metric]);})
-                            .attr("width", that.barWidth);
+                            .attr("width", that.barWidth)
+                            .attr("fill", "#4393c3")
+                            .attr("opacity", "0.6");
     
     var barEnterFemale = barsFemale.enter()
                              .append("rect")
@@ -180,7 +182,9 @@ Population.prototype.updateVis = function(){
                             .attr("x", function(d) {return that.x(d.key);})
                             .attr("y", function(d) {return that.y(d.values[that.metric]);})
                              .attr("height", function(d){return that.height - that.y(d.values[that.metric]);})
-                            .attr("width", that.barWidth);
+                            .attr("width", that.barWidth)
+                            .attr("fill", "#f4a582")
+                            .attr("opacity", "0.6");
             
            
     //ENTER + UPDATE data elements

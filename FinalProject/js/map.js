@@ -14,7 +14,6 @@ Map = function(_parentElement, _data, _aidsData, _eventHandler){
     this.height = 600 - this.margin.top - this.margin.bottom;
     this.eventHandler = _eventHandler;
     this.initMap();
-
 }
 
 /**
@@ -98,6 +97,10 @@ Map.prototype.updateVis = function(){
             else
                 return that.color(d.properties.death_ratio);
        })
+       .on("click", function (d){
+            //Add event handler to update population chart
+            $(that.eventHandler).trigger("selectionChanged", d.properties.name);
+        })
         // Add mouseover event or click event to the path
         .on("mouseover", function (d){
             // Update tooltip
@@ -114,17 +117,13 @@ Map.prototype.updateVis = function(){
             d3.select(".tooltip").html(d.properties.name + "<br/>"  + data + "<br/>")
                 .style("left", (d3.event.pageX) + "px")
                 .style("top", (d3.event.pageY - 28) + "px");
-        }
-        .on("click", function (d){
-            //Add event handler to update population chart
-            $(that.eventHandler).trigger("selectionChanged", d.properties.name);
         })
         .on("mouseout", function (d){
             // Remove tooltip
             d3.select(".tooltip").transition()
                 .duration(50)
                 .style("opacity", 0);
-        })
+        });
     var color_range = colorbrewer.Oranges[6].map(function(d, i){
         return that.color.invertExtent(d);
     })

@@ -59,16 +59,6 @@ svg {
   font: 10px sans-serif;
 }
 
-.barFemale {
-  fill-opacity: .6;
-  fill: #f4a582;
-}
-
-.barMale {
-  fill-opacity: .6;
-  fill: #4393c3;
-}
-
 div.tooltip {
     position: absolute;
     text-align: center;
