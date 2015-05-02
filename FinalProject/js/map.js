@@ -4,9 +4,8 @@
 
 var metrics = ["prevalence", "deaths"];
 
-Map = function(_parentElement, _data, _aidsData, _country, _eventHandler){
+Map = function(_parentElement, _data, _aidsData, _eventHandler){
     this.parentElement = _parentElement;
-    this.countryVis = _country;
     this.data = _data;
     this.metric = metrics[0];
     this.aidsData = _aidsData;
@@ -26,10 +25,8 @@ Map = function(_parentElement, _data, _aidsData, _country, _eventHandler){
 Map.prototype.wrangleData = function()
 {
     var that = this;
-
     var total_prevalence = d3.sum(that.data.features, function(d){return d.properties.aids_prevalence});
     var total_deaths = d3.sum(that.data.features, function(d){return d.properties.aids_deaths});
-
      // Add ratio for deaths and prevalence
     that.data.features.forEach(function (d){
         var prevalence_ratio = 0, death_ratio = 0;
@@ -42,15 +39,13 @@ Map.prototype.wrangleData = function()
         else
             d.properties.death_ratio = 0;
     })
-    // console.log(that.data);
+     var prevalence_ratio_range = d3.extent(that.data.features, function(d){return d.properties.prevalence_ratio})
 
-    var prevalence_ratio_range = d3.extent(that.data.features, function(d){return d.properties.prevalence_ratio})
-    // console.log(prevalence_ratio_range);
 }
 
 Map.prototype.initMap = function() {
     var projection = d3.geo.mercator().translate([this.width / 2 , this.height / 2]).scale([100]);
-    //var projection = d3.geo.equirectangular().translate([this.width / 2, this.height / 2]).scale([100]);
+
     this.path = d3.geo.path().projection(projection);
 
     this.svg = this.parentElement.append("svg")
@@ -58,7 +53,7 @@ Map.prototype.initMap = function() {
         .attr("height", this.height + this.margin.top + this.margin.bottom)
         .append("g")
         .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
-    // console.log(this.data.features);
+
     // Color Scale
     this.color = d3.scale.quantize().range(colorbrewer.Oranges[6]);
 
@@ -105,22 +100,33 @@ Map.prototype.updateVis = function(){
        })
         // Add mouseover event or click event to the path
         .on("mouseover", function (d){
-            if(that.metric == metrics[0])
-                that.countryVis.updateVis(d.properties, "prevalence");
-            else
-                that.countryVis.updateVis(d.properties, "deaths");
+            // Update tooltip
+            var data;
+            if(that.metric == metrics[0]) {
+                data = "Prevalence: " + d.properties.aids_prevalence;
+            }
+            else{
+                data = "Deaths: " + d.properties.aids_deaths;
+            }
+            d3.select(".tooltip").transition()
+                .duration(20)
+                .style("opacity", .9);
+            d3.select(".tooltip").html(d.properties.name + "<br/>"  + data + "<br/>")
+                .style("left", (d3.event.pageX) + "px")
+                .style("top", (d3.event.pageY - 28) + "px");
             
             //Add event handler to update population chart
             $(that.eventHandler).trigger("selectionChanged", d.properties.name);
         })
         .on("mouseout", function (d){
-        
+            // Remove tooltip
+            d3.select(".tooltip").transition()
+                .duration(50)
+                .style("opacity", 0);
             //Add event handler to update population chart
             $(that.eventHandler).trigger("selectionChanged", "world");
         })
-       // .on("click", function (d){
-            //console.log(d.properties.name);
-       // })
+
     var color_range = colorbrewer.Oranges[6].map(function(d, i){
         return that.color.invertExtent(d);
     })
@@ -148,6 +154,10 @@ Map.prototype.updateVis = function(){
      return i * 10 + 258;
      })
      .style("font-size", 9);
+
+    // Add legend info
+    this.svg.append("g").append("text").text("% contribution on overall").attr("class", "l_info").attr("x", 0).attr("y", 230);
+    this.svg.append("g").append("text").text("adolescent AIDS burden").attr("class", "l_info").attr("x", 0).attr("y", 240);
 }
 
 Map.prototype.updateMetric = function(selection){
@@ -155,13 +165,11 @@ Map.prototype.updateMetric = function(selection){
         this.metric = metrics[0];
     else
         this.metric = metrics[1];
-    // console.log(this.metric);
     this.update();
 }
 
 
 Map.prototype.updateYear= function(selection, updatedData){
-    // console.log("Selected Year", selection);
     this.data = updatedData;
     this.wrangleData();
     this.update();
