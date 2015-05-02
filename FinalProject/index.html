@@ -94,7 +94,7 @@
                     // Initialize Map, population and trend Visualization
                     map = new Map(d3.select("#global-map"), data, aidsData, MapClick);
                     population = new Population(d3.select("#country"), aidsData, defaultYear, "Global");
-                    trends = new Trends(d3.select('#trend_vis'), aidsData, country);
+                    trends = new Trends(d3.select('#trend_vis'), aidsData, "Global");
                     
                     //Create drop down menu options and event handler
                     country_names = d3.set(aids_data.map(function(d){return d.location_name;})).values();
@@ -201,6 +201,7 @@
                 map.updateMetric(d3.select(this).node().value);
                 info.updateMetric(d3.select(this).node().value);
                 population.updateMetric(d3.select(this).node().value);
+                trends.updateMetric(d3.select(this).node().value);
             })
             // Add year slider
             $( "#slider" ).slider({
