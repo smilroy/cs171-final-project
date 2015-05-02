@@ -114,13 +114,15 @@
             
             $(MapClick).bind("selectionChanged", function(event, country){
                     population.onSelectionChange(country);
+                    trends.onSelectionChange(country);
                     document.getElementById("drop").selectedIndex = country_names.indexOf(country);
             });
             
             var MenuChange = new Object();
             
             $(MenuChange).bind("MenuChanged", function(event){
-                    population.onSelectionChange($(".drop").val());
+                    population.onSelectionChange($(".drop").val())
+                    trends.onSelectionChange($(".drop").val());
             });
 
             function AggregateAndFilter(selectedYear)
