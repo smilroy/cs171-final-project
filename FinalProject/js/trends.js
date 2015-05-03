@@ -11,7 +11,7 @@ Trends = function(_parentElement, _aidsData, _country){
     this.metric = metrics[0];    
     this.duration = 500;
     this.margin = {top: 20, right: 50, bottom: 50, left: 50};
-    this.width = 700 - this.margin.left - this.margin.right;
+    this.width = 500 - this.margin.left - this.margin.right;
     this.height = 300 - this.margin.top - this.margin.bottom;
 
     this.sum_all = [];
@@ -103,10 +103,39 @@ Trends.prototype.initVis = function() {
     	.scale(that.y1)
     	.orient("right")
         .ticks(6);
+
+    //Add title
+    that.svg.append("text")
+        .attr("class", "title1")
+        .attr("x", (that.width/2))
+        .attr("y", 0 - (that.margin.top/2))
+        .attr("text-anchor", "middle")
+
+    //Add legend
+    that.legend = that.svg.append("g")
+        .attr("class", "legend")
+        .attr("transform", "translate(" + that.width/3.5 + "," + 0 + ")");
+
+    that.legend.selectAll("rect").data(["#f4a582", "#4393c3"]).enter().append("rect")
+        .attr("x", function(d,i){return (that.width/5) * i})
+        .attr("width", 10)
+        .style("fill", function(d) {return  d;})
+        .attr("height", 10)
+        .attr("y", that.height + (that.margin.bottom/1.5));
+    
+    that.legend.selectAll("text").data(["Total (Left)", "Adolescent (Right)"]).enter().append("text")
+        .attr("x", function(d,i){return (that.width/5) * i + 15})
+        .attr("width", 10)
+        .attr("height", 10)
+        .text(function(d) {return  d;})
+        .attr("y", that.height + (that.margin.bottom/1.19));
 }
 
 Trends.prototype.updateVis = function(){
     var that = this;
+
+    d3.selectAll("text.title1")
+        .text(that.country + ": " + "HIV " + that.metric + ", total and adolescent population over time");
 
     that.x.domain(d3.extent(that.sum_all, function(d) {return d.key }));
     that.y0.domain([0, d3.max(that.sum_all, function(d) {return d.values[that.metric];})]);
@@ -132,13 +161,13 @@ Trends.prototype.updateVis = function(){
 
     var path0update = path0.enter()
         .append("g")
-        .attr("stroke", '#4393c3')
+        .attr("stroke", '#f4a582')
         .attr("stroke-width", 1)
         .attr("fill", "none");
 
     var path1update = path1.enter()
         .append("g")
-        .attr("stroke", '#f4a582')
+        .attr("stroke", '#4393c3')
         .attr("stroke-width", 1)
         .attr("fill", "none");
 
