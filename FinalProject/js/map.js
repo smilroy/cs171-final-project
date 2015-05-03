@@ -85,6 +85,7 @@ Map.prototype.updateVis = function(){
     var that = this;
     d3.selectAll(".c_path").remove();
     d3.selectAll(".l_text").remove();
+    d3.selectAll(".g_info").remove();
     this.svg.selectAll("path")
         .data(that.data.features)
         .enter()
@@ -154,8 +155,12 @@ Map.prototype.updateVis = function(){
      .style("font-size", 9);
 
     // Add legend info
-    this.svg.append("g").append("text").text("% contribution on overall").attr("class", "l_info").attr("x", 0).attr("y", 230);
-    this.svg.append("g").append("text").text("adolescent AIDS burden").attr("class", "l_info").attr("x", 0).attr("y", 240);
+    // Add legend info
+    var info = this.svg.append("g")
+        .attr("class", "g_info")
+        .attr("transform", "translate(" + 0 + "," + 230 + ")");
+    info.append("text").text("% contribution on overall").attr("class", "l_info");
+    info.append("text").text("adolescent AIDS burden").attr("class", "l_info").attr("y", 10);
 }
 
 Map.prototype.updateMetric = function(selection){

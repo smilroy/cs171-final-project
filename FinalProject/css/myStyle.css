@@ -36,8 +36,9 @@ svg {
 }
 
 .title {
-  font: 13px 'Avenir';
-  color: #999;
+    font: 13px 'Avenir';
+    color: #999;
+}
 
 .col-map{
     width: 700px;
