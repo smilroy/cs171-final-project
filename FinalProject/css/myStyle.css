@@ -25,6 +25,10 @@ svg {
     fill: none;
 }
 
+#global-map path {
+    stroke: azure;
+}
+
 #trend_vis .axis path {
     stroke: #333;
     stroke-width: .5;
@@ -38,11 +42,6 @@ svg {
 
 .grid line {
   stroke: #777;
-}
-
-.title {
-    font: 13px 'Avenir';
-    color: #999;
 }
 
 .title {

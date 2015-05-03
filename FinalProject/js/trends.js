@@ -164,7 +164,7 @@ Trends.prototype.updateVis = function(){
         .attr("stroke", '#f4a582')
         .attr("stroke-width", 1)
         .attr("fill", "none");
-
+        
     var path1update = path1.enter()
         .append("g")
         .attr("stroke", '#4393c3')
@@ -194,13 +194,9 @@ Trends.prototype.updateVis = function(){
     // EXIT
 
     path0.exit()
-        .transition()
-        .duration(this.duration)    
         .remove();
 
     path1.exit()
-        .transition()
-        .duration(this.duration)    
         .remove();
 
     // AXES
