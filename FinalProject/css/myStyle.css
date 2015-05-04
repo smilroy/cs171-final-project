@@ -18,14 +18,14 @@ select {
 }
 
 header{
-     background: transparent;
-    color:maroon; 
+     background: none;
+    color:maroon;
     width: 100%;
     position: relative;
     margin-left:20px;
     margin-top: 0px;
     text-align:center;
-}
+ }
 
 footer{
     background-color: transparent;
@@ -119,8 +119,8 @@ div.tooltip {
 #video {
 	display: block;
     margin: 0 auto;
-    width="500";
-    height="313";
+    width: 500px;
+    height: 313px;
     text-align:center;
   }
 
