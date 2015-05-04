@@ -2,15 +2,15 @@ body{
     font-family: 'Avenir', sans-serif;
 }
 
-.col-map{
-    width: 700px;
-    height: 500px;
-    align: left;
+select {
+    font-family: 'Avenir', sans-serif;
+    font-size: 16px;
 }
 
 h2{
     font-family: 'Avenir', sans-serif;
-    color:maroon;
+    font-size: 40px;
+    color:maroon;    
 }
 
 svg {
@@ -22,11 +22,20 @@ svg {
 }
 
 .axis path {
-  display: none;
+    fill: none;
+}
+
+#global-map path {
+    stroke: azure;
+}
+
+#trend_vis .axis path {
+    stroke: #333;
+    stroke-width: .5;
 }
 
 .axis line {
-  stroke: #fff;
+  stroke: #777;
   stroke-opacity: .2;
   shape-rendering: crispEdges;
 }
@@ -36,13 +45,13 @@ svg {
 }
 
 .title {
-  font: 13px 'Avenir';
-  color: #999;
+    font: 13px 'Avenir';
+    color: #999;
+}
 
-.col-map{
-    width: 700px;
-    height: 500px;
-    align: left;
+.title1 {
+    font: 13px 'Avenir';
+    color: #999;
 }
     
 .l_info
@@ -50,13 +59,14 @@ svg {
     font-weight: bold;
     color:gray;
 }
+
 h2{
     font-family: 'PT Sans', sans-serif;
     color:maroon;
 }
 
 svg {
-  font: 10px sans-serif;
+    font: 10px sans-serif;
 }
 
 div.tooltip {
@@ -74,5 +84,5 @@ div.tooltip {
 }
     
 .mapClick {
-   fill: green; 
+    fill: green; 
 }

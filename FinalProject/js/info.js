@@ -50,9 +50,9 @@ Info.prototype.update = function(){
     this.svg.append("g").attr("transform", "translate(" + 5 + "," + 70 + ")").attr("class", "text_g").append("text")
         .text(function(){
             if(that.metric == metrics[0])
-                return "Adolescents living with HIV/AIDS in the year " + that.year;
+                return "Adolescents living worldwide with HIV/AIDS in the year " + that.year;
             else
-                return "Adolescents deaths from HIV/AIDS in the year " + that.year;
+                return "Adolescents deaths worldwide from HIV/AIDS in the year " + that.year;
         } )
         .style("font-size", 12);
 
@@ -76,7 +76,7 @@ Info.prototype.updateMetric = function(selection){
 
 
 Info.prototype.updateYear= function(selection, totalPrevalence, totalDeaths){
-      this.year = selection;
+    this.year = selection;
     this.totalPrevalence = totalPrevalence;
     this.totalDeaths = totalDeaths;
 

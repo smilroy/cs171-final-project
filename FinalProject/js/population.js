@@ -15,7 +15,7 @@ Population = function(_parentElement, _aidsData, _year, _country){
     this.duration = 500;
     this.margin = {top: 20, right: 50, bottom: 50, left: 50};
     this.width = 500 - this.margin.left - this.margin.right;
-    this.height = 400 - this.margin.top - this.margin.bottom;
+    this.height = 300 - this.margin.top - this.margin.bottom;
     this.barWidth = Math.floor(this.width/17) - 1;
     this.ageGroups = ["0-4", "5-9","10-14","15-19","20-24","25-29","30-34","35-39","40-44","45-49","50-54","55-59","60-64","65-69","70-74","75-79","80+"];
     
