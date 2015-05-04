@@ -32,7 +32,7 @@ Population = function(_parentElement, _aidsData, _year, _country){
                     .orient("left")
                     .tickSize(-this.width)
                     .tickFormat(function(d) {
-                        if(d>=1){
+                        if(d>=10){
                             return d3.format(',')(d3.round(d,0));
                         }else{
                             return d3.format(',')(d3.round(d,2));    

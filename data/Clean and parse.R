@@ -87,7 +87,7 @@ data_HIV <- subset(data_HIV, !(data_HIV$location_name %in% summary_categories))
 
 ##data_HIV <- subset(data_HIV, !(data_HIV$location_name %in% drop_countries))
 data_HIV$mean <- as.numeric(data_HIV$mean)
-data_HIV$metric <- revalue(data_HIV$metric, c("Prevalence"="Prevalence rate", "Deaths"="HIV Deaths, Total"))
+data_HIV$metric <- revalue(data_HIV$metric, c("Prevalence"="hiv_population_total", "Deaths"="hiv_deaths_total"))
 
 ###############Load data for total population both sexes##################
 load("data_population_both.Rda")
@@ -128,7 +128,7 @@ data_population_both <- data_population_both[!drop]
 library(reshape) 
 data_population_both <- melt(data_population_both, id = c("location_name","year"))
 data_population_both$sex_name <- "Both sexes"
-data_population_both$metric <- "Population, Total"
+data_population_both$metric <- "population_total"
 colnames(data_population_both)[3] <- "age_group_name"
 colnames(data_population_both)[4] <- "mean"
 data_population_both$mean <- as.numeric(as.character(data_population_both$mean))
@@ -204,6 +204,7 @@ data_population_both$location_name <- revalue(data_population_both$location_name
                                               c("Bahamas"="The Bahamas",
                                                 "Bolivia (Plurinational State of)"="Bolivia",
                                                 "Brunei Darussalam"="Brunei",
+                                                "Côte d'Ivoire" = "Cote d'Ivoire",
                                                 "Gambia"="The Gambia",
                                                 "Iran (Islamic Republic of)"="Iran",
                                                 "Lao People's Democratic Republic"="Laos",
@@ -258,7 +259,7 @@ data_population_female <- data_population_female[!drop]
 ##Reshape data
 data_population_female <- melt(data_population_female, id = c("location_name","year"))
 data_population_female$sex_name <- "Females"
-data_population_female$metric <- "Population, Total"
+data_population_female$metric <- "population_total"
 colnames(data_population_female)[3] <- "age_group_name"
 colnames(data_population_female)[4] <- "mean"
 data_population_female$mean <- as.numeric(as.character(data_population_female$mean))
@@ -273,6 +274,7 @@ data_population_female$location_name <- revalue(data_population_female$location_
                                               c("Bahamas"="The Bahamas",
                                                 "Bolivia (Plurinational State of)"="Bolivia",
                                                 "Brunei Darussalam"="Brunei",
+                                                "Côte d'Ivoire" = "Cote d'Ivoire",
                                                 "Gambia"="The Gambia",
                                                 "Iran (Islamic Republic of)"="Iran",
                                                 "Lao People's Democratic Republic"="Laos",
@@ -327,7 +329,7 @@ data_population_male <- data_population_male[!drop]
 ##Reshape data
 data_population_male <- melt(data_population_male, id = c("location_name","year"))
 data_population_male$sex_name <- "Males"
-data_population_male$metric <- "Population, Total"
+data_population_male$metric <- "population_total"
 colnames(data_population_male)[3] <- "age_group_name"
 colnames(data_population_male)[4] <- "mean"
 data_population_male$mean <- as.numeric(as.character(data_population_male$mean))
@@ -342,6 +344,7 @@ data_population_male$location_name <- revalue(data_population_male$location_name
                                                 c("Bahamas"="The Bahamas",
                                                   "Bolivia (Plurinational State of)"="Bolivia",
                                                   "Brunei Darussalam"="Brunei",
+                                                  "Côte d'Ivoire" = "Cote d'Ivoire",
                                                   "Gambia"="The Gambia",
                                                   "Iran (Islamic Republic of)"="Iran",
                                                   "Lao People's Democratic Republic"="Laos",
@@ -414,7 +417,7 @@ data_MORTALITY <- subset(data_MORTALITY, select = -age)
 ##Collapse over age groups
 library(doBy)
 data_MORTALITY <- summaryBy(death_abs ~ location_name + year + age_group_name + sex_name, FUN=c(mean), data=data_MORTALITY)
-data_MORTALITY$metric <- "Deaths, Total"
+data_MORTALITY$metric <- "deaths_total"
 colnames(data_MORTALITY)[5] <- "mean"
 data_MORTALITY$sex_name <- revalue(data_MORTALITY$sex_name, c("Both"="Both sexes",
                                                               "Female"="Females",
@@ -448,27 +451,7 @@ data_MORTALITY$location_name <- revalue(data_MORTALITY$location_name, c('Brunei 
 ##################Append data#########################
 data_total <- rbind(data_HIV,data_MORTALITY,data_population_both, data_population_male, data_population_female)
 
-data_prevalence <- subset(data_total,data_total$metric=="Prevalence rate" | data_total$metric=="Population, Total")
-
-data_prevalence <- cast(data_prevalence, location_name + year + age_group_name + sex_name ~ metric, mean)
-
-data_prevalence$"HIV+ Population, Total" <- apply(data_prevalence[5:6], 1, function(x) x[1]*(x[2]/100000))
-
-data_prevalence <- subset(data_prevalence, select = c("location_name","year","age_group_name","sex_name","HIV+ Population, Total"))
-
-colnames(data_prevalence)[5] <- "mean"
-
-data_prevalence$metric <- "HIV+ Population, Total"
-
-data_total <- rbind(data_total,data_prevalence)
-data_total <- subset(data_total, !(data_total$metric %in% c("Prevalence rate")))
 colnames(data_total)[6] <- "value"
-
-save(data_total,file="data_total.Rda")
-
-##Write to csv
-setwd("/Users/shannonmilroy/Documents/Harvard School Files/Spring 2015/Visualization/cs171-final-project/data")
-write.csv(data_total, "data_clean.csv")
 
 ##Create collapsed version
 data_total_collapse <- melt(data_total, id = c("location_name","year", "age_group_name","sex_name","metric"))
@@ -476,4 +459,12 @@ data_total_collapse <- melt(data_total, id = c("location_name","year", "age_grou
 data_total_collapse <- subset(data_total_collapse, select = -variable)
 data_total_collapse <- cast(data_total_collapse, location_name + year + age_group_name + sex_name ~ metric, mean)
 
-write.csv(data_total_collapse, "data_clean_collapse.csv")
+data_total_collapse <- data_total_collapse[,c("location_name", "year", "age_group_name", "sex_name", "deaths_total", "hiv_deaths_total", "population_total", "hiv_population_total")]
+
+data_total_collapse <- subset(data_total_collapse, !(location_name %in% c("Andorra","Antigua and Barbuda","Bahrain","Cape Verde","Comoros","Dominica","Federated States of Micronesia","Grenada","Kiribati","Maldives","Malta","Marshall Islands","Mauritius","Republic of Moldova","Saint Lucia","Saint Vincent and the Grenadines","Samoa","Sao Tome and Principe","Seychelles","Singapore","Timor-Leste","Tonga", "China, Hong Kong SAR")))
+
+data_total_collapse$location_name <- revalue(data_total_collapse$location_name, c('The Bahamas'='Bahamas', "The Gambia" = "Gambia", "Guinea-Bissau" = "Guinea Bissau"))
+
+data_total_collapse <- data_total_collapse[order(data_total_collapse$location_name),] 
+
+write.csv(data_total_collapse, "data_clean.csv")
