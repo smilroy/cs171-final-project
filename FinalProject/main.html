@@ -128,7 +128,8 @@
                             else
                                 return that.color(d.properties.death_ratio);
                             })
-                    name = "#" + $(".drop").val();
+
+                    name = "#" + $(".drop").val().replace(/\s+/g, '');
                     d3.select(name).style("fill","#4393c3");
 
                     trends.onSelectionChange($(".drop").val());
