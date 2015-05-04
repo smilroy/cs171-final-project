@@ -28,7 +28,6 @@ Map.prototype.wrangleData = function()
     var total_deaths = d3.sum(that.data.features, function(d){return d.properties.aids_deaths});
      // Add ratio for deaths and prevalence
     that.data.features.forEach(function (d){
-        console.log(d.properties.name);
         var prevalence_ratio = 0, death_ratio = 0;
         if(total_prevalence > 0)
             d.properties.prevalence_ratio = d.properties.aids_prevalence/total_prevalence * 100;

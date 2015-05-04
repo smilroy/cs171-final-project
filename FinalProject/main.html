@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Adolescent AIDS</title>
+    <!-- ADD Libraries-->
+    <script src="libs/d3/d3.min.js" charset="utf-8"></script>
+    <script src="libs/jquery/jquery-2.1.1.min.js" charset="utf-8"></script>
+    <script src="libs/bootstrap/js/bootstrap.min.js" charset="utf-8"></script>
+    <script src="http://d3js.org/queue.v1.min.js"></script>
+    <script src="libs/colorbrewer.js"></script>
+    <script src="libs/jquery-ui-1.11.4.custom/jquery-ui.js"></script>
+
+    <!--Stylesheets-->
+    <link rel="stylesheet" type="text/css" href="libs/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.10.4/themes/flick/jquery-ui.css">
+
+    <!-- Project Stylesheet -->
+    <link rel="stylesheet" type="text/css" href="css/myStyle.css">
+    <link rel="stylesheet" type="text/css" href="css/pips.css">
+
+    <!-- Project js -->
+    <script src="js/map.js"></script>
+    <script src="js/info.js"></script>
+    <script src="js/population.js"></script>
+    <script src="js/pips.js"></script>
+    <script src="js/trends.js"></script>
+</head>
+
+<body>
+<div class="container">
+    <div class="row">
+        <h2 style="margin-left:20px">HIV epidemic in adolescents across the world</h2>
+    </div>    
+    <div class="col-md-8">
+        <div class="row">
+            <div id="info" style="float:left;">
+            </div>
+        </div>
+        <div class="row">
+            <div class ="col-md-3">
+                <div id="filter" style="float:left; width:200px; margin-top:5px;">
+                    <input type="radio" name="filter" value="prevalence" checked> Prevalence
+                    <input type="radio" name="filter" value="deaths"> Deaths
+                </div>
+              </div>
+            <div class ="col-md-3" id="menu" style="margin-top:5px;">
+            </div>
+        </div>
+        <div class="row">
+            <div class ="col-md-8" id="slider" style="width:600px;">
+            </div>
+        </div>
+        <div class="row">
+            <div id="global-map" class ="col-md-8">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div id="country"></div>
+        <div id="trend_vis"></div>
+    </div>
+    <div id="tooltip" class="tooltip" style="opacity:0">
+    </div>
+</div>
+    <script>
+        $(function(){
+            var map, info, country, total_prevalence, total_deaths, total_population_prevalence, total_population_deaths;
+            var defaultYear = "2010";
+            var world_data, aids_data;
+            queue()
+                    .defer(d3.json, 'data/world_data.json')
+                    .defer(d3.csv, 'data/aids_data.csv')
+                    .await(function (error, worldData, aidsData){
+                        LoadData(error, worldData, aidsData);
+                    });
+
+            var LoadData = function(error, worldData, aidsData){
+                if(!error)
+                {
+                    world_data = worldData;
+                    aids_data = aidsData;
+                    var data = AggregateAndFilter(defaultYear);
+                    
+                    //Add country drop-down menu for population chart and event handler
+                    d3.select("#menu").append("select").attr("class","drop").attr("id","drop");
+                    d3.select(".drop").on("change", function(d){$(MenuChange).trigger("MenuChanged")});
+                    
+                   // Initialize Info Visualization
+                    info = new Info(d3.select("#info"), defaultYear, total_prevalence, total_deaths, total_population_prevalence, total_population_deaths);
+                    
+                    // Initialize Map, population and trend Visualization
+                    map = new Map(d3.select("#global-map"), data, aidsData, MapClick);
+                    population = new Population(d3.select("#country"), aidsData, defaultYear, "Global");
+                    trends = new Trends(d3.select('#trend_vis'), aidsData, "Global");
+                    
+                    //Create drop down menu options and event handler
+                    country_names = d3.set(aids_data.map(function(d){return d.location_name;})).values();
+                    d3.select(".drop").append("option")
+                             .text("Global")
+                             .attr("value","Global")
+                             .attr("selected", "selected");
+                    
+                    d3.select(".drop").selectAll("option").data(country_names).enter().append("option")
+                            .text(function(d){return d;})
+                            .attr("value",function(d){return d;});
+                }
+            }
+            
+            //Add event handler to trigger population chart change when country mouse over
+            var MapClick = new Object();
+            
+            $(MapClick).bind("selectionChanged", function(event, country){
+                    population.onSelectionChange(country);
+                    trends.onSelectionChange(country);
+                    document.getElementById("drop").selectedIndex = country_names.indexOf(country);
+                    $(MenuChange).trigger("MenuChanged");
+            });
+            
+            var MenuChange = new Object();
+            
+            $(MenuChange).bind("MenuChanged", function(event){
+                    population.onSelectionChange($(".drop").val());
+                    var that = map;
+                    d3.selectAll(".c_path").style("fill", function(d) {
+                            if(that.metric == metrics[0])
+                                return that.color(d.properties.prevalence_ratio);
+                            else
+                                return that.color(d.properties.death_ratio);
+                            })
+                    name = "#" + $(".drop").val();
+                    d3.select(name).style("fill","#4393c3");
+
+                    trends.onSelectionChange($(".drop").val());
+            });
+
+            function AggregateAndFilter(selectedYear)
+            {
+                var adolescentData = aids_data.filter(function(d){
+                    return (d.age_group_name == "10-14" || d.age_group_name == "15-19")
+                            && d.sex_name == "Both sexes" && d.year == selectedYear; //&& d.metric == metric;
+                })
+
+                var worldData = world_data;
+                // For each country iterate through adolescentData
+                worldData.features.forEach(function (d){
+                    var prevalence_count = 0;
+                    var death_count = 0;
+                    var count = 0;
+                    adolescentData.forEach(function (a){
+                        if(count >= 2) // Do not iterate over all the countries if already found 2 records for a country
+                            return;
+                        if(a.location_name == d.properties.name)
+                        {
+                            if(a.hiv_population_total != "NA")
+                                prevalence_count = prevalence_count + parseFloat(a.hiv_population_total);
+                            if(a.hiv_deaths_total != "NA")
+                                death_count = death_count + parseFloat(a.hiv_deaths_total);
+                            count++;
+                        }
+                    })
+                    d.properties.aids_prevalence = d3.round(prevalence_count);
+                    d.properties.aids_deaths = d3.round(death_count);
+                })
+
+                total_prevalence = d3.sum(worldData.features, function(d){return d.properties.aids_prevalence});
+                total_deaths = d3.sum(worldData.features, function(d){return d.properties.aids_deaths});
+                // Calculate aids prevalence and deaths in total population
+                var all_population = aids_data.filter(function(d){
+                    return(d.sex_name == "Both sexes" && d.year == selectedYear);
+                })
+                total_population_prevalence = d3.sum(all_population, function(d){
+                    return d3.round(d.hiv_population_total);
+                })
+                total_population_deaths = d3.sum(all_population, function(d){
+                    return d3.round(d.hiv_deaths_total);
+                })
+
+                return worldData;
+            }
+            /**** Add UI Events ****/
+            d3.select("#filter").selectAll("input").on("click", function() {
+                var selectedMetric = d3.select(this).node().value;
+                // Reset the slider when radio button selection changes
+                if(selectedMetric == "prevalence"){
+                    $( "#slider" ).slider({
+                        min: 1990,
+                        max:2010,
+                        step: 5,
+                        value: 2012// default selection
+                    })
+                            .slider("pips", {
+                                rest: "label"
+                            }
+                    );
+                }
+                else
+                {
+                    $( "#slider" ).slider({
+                        min: 1990,
+                        max:2010,
+                        step: 1,
+                        value: 2010
+                    })
+                            .slider("pips", {
+                                rest: "label"
+                            }
+                    );
+                }
+
+
+                map.updateMetric(d3.select(this).node().value);
+                info.updateMetric(d3.select(this).node().value);
+                population.updateMetric(d3.select(this).node().value);
+                trends.updateMetric(d3.select(this).node().value);
+                $(MenuChange).trigger("MenuChanged");
+            })
+            // Add year slider
+            $( "#slider" ).slider({
+                min: 1990,
+                max:2010,
+                step: 5,
+                value: 2010
+            })
+                    .slider("pips", {
+                        rest: "label"
+                    }
+            )
+            .on("slidechange", function(e,ui) {
+                        var selectedYr =[ui.value];
+                        var data = AggregateAndFilter(selectedYr);
+                        map.updateYear(selectedYr, data);
+                        info.updateYear(selectedYr, total_prevalence, total_deaths);
+                        population.updateYear(selectedYr);
+                        $(MenuChange).trigger("MenuChanged");
+            });
+        })
+     </script>
+</body>
+</html>
