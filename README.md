@@ -10,13 +10,13 @@ HIV in Adolescence
 
 ### Key Features
 
-* The key interactive features in the visualization include:
-* * Radio button to switch between Death and Prevalence
-* * Dropdown menu to select country to explore
-* * Map displaying contribution featuring a tooltip to select country to explore
-* * Age and gender distribution chart
-* * Trend graph featuring total and adolescent population shifts
-* * Slider to view trends at certain periods in time
+The key interactive features in the visualization include:
+* Radio button to switch between Death and Prevalence
+* Dropdown menu to select country to explore
+* Map displaying contribution featuring a tooltip to select country to explore
+* Age and gender distribution chart
+* Trend graph featuring total and adolescent population shifts
+* Slider to view trends at certain periods in time
 
 ### Relevant URLs
 
