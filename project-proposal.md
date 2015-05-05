@@ -34,11 +34,11 @@ We plan to make the main visualization a map where death and prevalence are able
 
 #### Map Variations
 <p align="center">
-  <img src="sketches/map.jpg" width="500"/>
-  <img src="sketches/detailedprevalencedeath.jpg" width="500"/>
-  <img src="sketches/IMG_7174.JPG" width="500"/>
-  <img src="sketches/IMG_7175.JPG" width="500"/>
-  <img src="sketches/sketch.jpg" width="500"/>
+  <img src="sketches/proposal/map.jpg" width="500"/>
+  <img src="sketches/proposal/detailedprevalencedeath.jpg" width="500"/>
+  <img src="sketches/proposal/IMG_7174.JPG" width="500"/>
+  <img src="sketches/proposal/IMG_7175.JPG" width="500"/>
+  <img src="sketches/proposal/sketch.jpg" width="500"/>
 </p>
 
 ### Must-Have Features. 
@@ -76,7 +76,6 @@ Week 12: Update meeting April 17
 
 - Baishi/Shannon: prototype assigned visualizations that were selected for inclusion in the project
 - Sabina: incorporate feedback/changes into the map visualization
-
 
 Week 13: Update meeting after TF feedback session
 
