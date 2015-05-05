@@ -132,6 +132,7 @@ Population.prototype.initVis = function() {
         .attr("x", function(d,i){return (that.width/5) * i})
         .attr("width", 10)
         .style("fill", function(d) {return  d;})
+        .attr("opacity", "0.6")
         .attr("height", 10)
         .attr("y", that.height + (that.margin.bottom/1.5));
     
